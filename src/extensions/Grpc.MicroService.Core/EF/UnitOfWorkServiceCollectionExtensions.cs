@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Microsoft.Extensions.DependencyInjection
+namespace Grpc.MicroService.EF
 {
     /// <summary>
     /// Extension methods for setting up unit of work related services in an <see cref="IServiceCollection"/>.
     /// </summary>
-    public static class ServiceCollectionExtensions
+    internal static class UnitOfWorkServiceCollectionExtensions
     {
         /// <summary>
         /// Registers the unit of work given context as a service in the <see cref="IServiceCollection"/>.

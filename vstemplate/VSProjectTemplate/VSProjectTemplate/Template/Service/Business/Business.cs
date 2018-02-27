@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+using Grpc.MicroService.EF;
 
 namespace $ext_safeprojectname$.Service.Business
 {

@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Arch team. All rights reserved.
 
-namespace Microsoft.EntityFrameworkCore
+namespace Grpc.MicroService.EF
 {
     /// <summary>
     /// Defines the interfaces for <see cref="IDbRepository{TEntity}"/> interfaces.

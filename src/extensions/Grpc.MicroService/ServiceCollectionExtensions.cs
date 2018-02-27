@@ -1,4 +1,4 @@
-﻿using Grpc.MicroService.Core.Internal;
+﻿using Grpc.MicroService.Internal;
 using System;
 using System.Collections.Generic;
 using System.Text;

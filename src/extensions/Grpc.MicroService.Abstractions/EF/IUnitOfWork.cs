@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace Microsoft.EntityFrameworkCore
+namespace Grpc.MicroService.EF
 {
     /// <summary>
     /// Defines the interface(s) for unit of work.

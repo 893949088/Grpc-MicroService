@@ -1,8 +1,10 @@
 ﻿// Copyright (c) Arch team. All rights reserved.
 
+using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
-namespace Microsoft.EntityFrameworkCore {
+namespace Grpc.MicroService.EF
+{
     /// <summary>
     /// Defines the interface(s) for generic unit of work.
     /// </summary>

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Grpc.MicroService.Core.Internal
+namespace Grpc.MicroService.Internal
 {
     public class MicroServiceBuilder : IMicroServiceBuilder
     {

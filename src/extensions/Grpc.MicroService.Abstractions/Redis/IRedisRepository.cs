@@ -1,12 +1,13 @@
-﻿using StackExchange.Redis;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Grpc.MicroService.Redis
 {
-    public interface IRedisRepository
+    public interface IRedisRepository : IDisposable
     {
+        
         #region Redis 客户端操作
 
         /// <summary>
@@ -30,7 +31,7 @@ namespace Grpc.MicroService.Redis
         /// <param name= "when">枚举类型</param>
         /// <param name="commandFlags"></param>
         /// <returns>true or false</returns>
-        bool StringSet<T>(string key, object value, TimeSpan? expiry = default(TimeSpan?), When when = When.Always, CommandFlags commandFlags = CommandFlags.None) where T : class;
+        bool StringSet<T>(string key, object value, TimeSpan? expiry = default(TimeSpan?)) where T : class;
 
         /// <summary>
         /// Redis String类型 新增一条记录
@@ -42,17 +43,7 @@ namespace Grpc.MicroService.Redis
         /// <param name= "when">枚举类型</param>
         /// <param name="commandFlags"></param>
         /// <returns>true or false</returns>
-        bool StringSet<T>(string key, T value, TimeSpan? expiry = default(TimeSpan?), When when = When.Always, CommandFlags commandFlags = CommandFlags.None) where T : class;
-
-        /// <summary>
-        /// Redis String类型 新增一条记录
-        /// </summary>
-        /// <typeparam name="T">generic refrence type</typeparam>
-        /// <param name="key">unique key of value</param>
-        /// <param name="value">value of key of type object</param>
-        /// <param name="expiresAt">time span of expiration</param>
-        /// <returns>true or false</returns>
-        bool StringSetByValue(string key, RedisValue value, TimeSpan? expiresAt = default(TimeSpan?), When when = When.Always, CommandFlags commandFlags = CommandFlags.None);
+        bool StringSet<T>(string key, T value, TimeSpan? expiry = default(TimeSpan?)) where T : class;
 
         /// <summary>
         /// 更新时应使用此方法，代码更可读。
@@ -64,7 +55,7 @@ namespace Grpc.MicroService.Redis
         /// <param name="when"></param>
         /// <param name="commandFlags"></param>
         /// <returns></returns>
-        bool StringUpdate<T>(string key, T value, TimeSpan expiresAt, When when = When.Always, CommandFlags commandFlags = CommandFlags.None) where T : class;
+        bool StringUpdate<T>(string key, T value, TimeSpan expiresAt) where T : class;
 
         /// <summary>
         /// Redis String类型  Get
@@ -73,7 +64,7 @@ namespace Grpc.MicroService.Redis
         /// <param name="key"></param>
         /// <param name="commandFlags"></param>
         /// <returns>T</returns>
-        T StringGet<T>(string key, CommandFlags commandFlags = CommandFlags.None) where T : class;
+        T StringGet<T>(string key) where T : class;
 
         /// <summary>
         /// Redis String类型  Get
@@ -82,14 +73,14 @@ namespace Grpc.MicroService.Redis
         /// <param name="key"></param>
         /// <param name="commandFlags"></param>
         /// <returns>T</returns>
-        string StringGet(string key, CommandFlags commandFlags = CommandFlags.None);
+        string StringGet(string key);
         /// <summary>
         /// Redis String数据类型 获取指定key中字符串长度
         /// </summary>
         /// <param name="key"></param>
         /// <param name="commandFlags"></param>
         /// <returns></returns>
-        long StringLength(string key, CommandFlags commandFlags = CommandFlags.None);
+        long StringLength(string key);
 
         /// <summary>
         ///  Redis String数据类型  返回拼接后总长度
@@ -98,7 +89,7 @@ namespace Grpc.MicroService.Redis
         /// <param name="appendVal"></param>
         /// <param name="commandFlags"></param>
         /// <returns>总长度</returns>
-        long StringAppend(string key, string appendVal, CommandFlags commandFlags = CommandFlags.None);
+        long StringAppend(string key, string appendVal);
 
         /// <summary>
         /// 设置新值并且返回旧值
@@ -107,7 +98,7 @@ namespace Grpc.MicroService.Redis
         /// <param name="newVal"></param>
         /// <param name="commandFlags"></param>
         /// <returns>OldVal</returns>
-        string StringGetAndSet(string key, string newVal, CommandFlags commandFlags = CommandFlags.None);
+        string StringGetAndSet(string key, string newVal);
 
         /// <summary>
         /// 为数字增长val
@@ -116,18 +107,8 @@ namespace Grpc.MicroService.Redis
         /// <param name="val"></param>
         /// <param name="commandFlags"></param>
         /// <returns>增长后的值</returns>
-        double StringIncrement(string key, double val, CommandFlags commandFlags = CommandFlags.None);
+        double StringIncrement(string key, double val);
 
-        /// <summary>
-        /// Redis String数据类型
-        /// 类似于模糊查询  key* 查出所有key开头的键
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="key"></param>
-        /// <param name="pageSize"></param>
-        /// <param name="commandFlags"></param>
-        /// <returns>返回List<T></returns>
-        //List<T> StringGetList<T>(string key, int pageSize = 1000, CommandFlags commandFlags = CommandFlags.None) where T : class;
         #endregion
 
         #region Redis Hash散列数据类型操作
@@ -135,7 +116,7 @@ namespace Grpc.MicroService.Redis
         /// <summary>
         /// Redis散列数据类型  批量新增
         /// </summary>
-        void HashSet(string key, List<HashEntry> hashEntrys, CommandFlags flags = CommandFlags.None);
+        void HashSet<T>(string key, IEnumerable<KeyValuePair<string, T>> keyvalues);
 
         /// <summary>
         /// Redis散列数据类型  新增一个
@@ -143,7 +124,7 @@ namespace Grpc.MicroService.Redis
         /// <param name="key"></param>
         /// <param name="field"></param>
         /// <param name="val"></param>
-        void HashSet<T>(string key, string field, T val, When when = When.Always, CommandFlags flags = CommandFlags.None);
+        void HashSet<T>(string key, string field, T val);
 
         /// <summary>
         ///  Redis散列数据类型 获取指定key的指定field
@@ -159,7 +140,7 @@ namespace Grpc.MicroService.Redis
         /// <param name="key"></param>
         /// <param name="flags"></param>
         /// <returns></returns>
-        HashEntry[] HashGetAll(string key, CommandFlags flags = CommandFlags.None);
+        IEnumerable<KeyValuePair<string, T>> HashGetAll<T>(string key);
 
         /// <summary>
         /// Redis散列数据类型 获取key中所有field的值。
@@ -168,7 +149,7 @@ namespace Grpc.MicroService.Redis
         /// <param name="key"></param>
         /// <param name="flags"></param>
         /// <returns></returns>
-        List<T> HashGetAllValues<T>(string key, CommandFlags flags = CommandFlags.None);
+        IEnumerable<T> HashGetAllValues<T>(string key);
 
         /// <summary>
         /// Redis散列数据类型 获取所有Key名称
@@ -176,7 +157,7 @@ namespace Grpc.MicroService.Redis
         /// <param name="key"></param>
         /// <param name="flags"></param>
         /// <returns></returns>
-        string[] HashGetAllKeys(string key, CommandFlags flags = CommandFlags.None);
+        string[] HashGetAllKeys(string key);
 
         /// <summary>
         ///  Redis散列数据类型  单个删除field
@@ -185,7 +166,7 @@ namespace Grpc.MicroService.Redis
         /// <param name="hashField"></param>
         /// <param name="flags"></param>
         /// <returns></returns>
-        bool HashDelete(string key, string hashField, CommandFlags flags = CommandFlags.None);
+        bool HashDelete(string key, string hashField);
 
         /// <summary>
         ///  Redis散列数据类型  批量删除field
@@ -194,7 +175,7 @@ namespace Grpc.MicroService.Redis
         /// <param name="hashFields"></param>
         /// <param name="flags"></param>
         /// <returns></returns>
-        long HashDelete(string key, string[] hashFields, CommandFlags flags = CommandFlags.None);
+        long HashDelete(string key, string[] hashFields);
 
         /// <summary>
         ///  Redis散列数据类型 判断指定键中是否存在此field
@@ -203,7 +184,7 @@ namespace Grpc.MicroService.Redis
         /// <param name="field"></param>
         /// <param name="flags"></param>
         /// <returns></returns>
-        bool HashExists(string key, string field, CommandFlags flags = CommandFlags.None);
+        bool HashExists(string key, string field);
 
         /// <summary>
         /// Redis散列数据类型  获取指定key中field数量
@@ -211,7 +192,7 @@ namespace Grpc.MicroService.Redis
         /// <param name="key"></param>
         /// <param name="flags"></param>
         /// <returns></returns>
-        long HashLength(string key, CommandFlags flags = CommandFlags.None);
+        long HashLength(string key);
 
         /// <summary>
         /// Redis散列数据类型  为key中指定field增加incrVal值
@@ -221,7 +202,7 @@ namespace Grpc.MicroService.Redis
         /// <param name="incrVal"></param>
         /// <param name="flags"></param>
         /// <returns></returns>
-        double HashIncrement(string key, string field, double incrVal, CommandFlags flags = CommandFlags.None);
+        double HashIncrement(string key, string field, double incrVal);
 
 
         #endregion
@@ -233,7 +214,7 @@ namespace Grpc.MicroService.Redis
         /// </summary>
         /// <returns>the requested element, or nil when index is out of range.</returns>
         /// <remarks>http://redis.io/commands/lindex</remarks>
-        T ListGetByIndex<T>(string key, long index, CommandFlags flags = CommandFlags.None);
+        T ListGetByIndex<T>(string key, long index);
 
         /// <summary>
         /// Inserts value in the list stored at key either before or after the reference value pivot.
@@ -241,7 +222,7 @@ namespace Grpc.MicroService.Redis
         /// </summary>
         /// <returns>the length of the list after the insert operation, or -1 when the value pivot was not found.</returns>
         /// <remarks>http://redis.io/commands/linsert</remarks>
-        long ListInsertAfter(string key, object pivot, object value, CommandFlags flags = CommandFlags.None);
+        long ListInsertAfter(string key, object pivot, object value);
 
         /// <summary>
         /// Inserts value in the list stored at key either before or after the reference value pivot.
@@ -249,14 +230,14 @@ namespace Grpc.MicroService.Redis
         /// </summary>
         /// <returns>the length of the list after the insert operation, or -1 when the value pivot was not found.</returns>
         /// <remarks>http://redis.io/commands/linsert</remarks>
-        long ListInsertBefore(string key, object pivot, object value, CommandFlags flags = CommandFlags.None);
+        long ListInsertBefore(string key, object pivot, object value);
 
         /// <summary>
         /// Removes and returns the first element of the list stored at key.
         /// </summary>
         /// <returns>the value of the first element, or nil when key does not exist.</returns>
         /// <remarks>http://redis.io/commands/lpop</remarks>
-        T ListLeftPop<T>(string key, CommandFlags flags = CommandFlags.None);
+        T ListLeftPop<T>(string key);
 
         /// <summary>
         /// Insert the specified value at the head of the list stored at key. If key does not exist, it is created as empty list before performing the push operations.
@@ -264,7 +245,7 @@ namespace Grpc.MicroService.Redis
         /// <returns>the length of the list after the push operations.</returns>
         /// <remarks>http://redis.io/commands/lpush</remarks>
         /// <remarks>http://redis.io/commands/lpushx</remarks>
-        long ListLeftPush(string key, object value, When when = When.Always, CommandFlags flags = CommandFlags.None);
+        long ListLeftPush(string key, object value);
 
         /// <summary>
         /// Insert all the specified values at the head of the list stored at key. If key does not exist, it is created as empty list before performing the push operations.
@@ -272,14 +253,14 @@ namespace Grpc.MicroService.Redis
         /// </summary>
         /// <returns>the length of the list after the push operations.</returns>
         /// <remarks>http://redis.io/commands/lpush</remarks>
-        long ListLeftPush(string key, object[] values, CommandFlags flags = CommandFlags.None);
+        long ListLeftPush(string key, object[] values);
 
         /// <summary>
         /// Returns the length of the list stored at key. If key does not exist, it is interpreted as an empty list and 0 is returned. 
         /// </summary>
         /// <returns>the length of the list at key.</returns>
         /// <remarks>http://redis.io/commands/llen</remarks>
-        long ListLength(string key, CommandFlags flags = CommandFlags.None);
+        long ListLength(string key);
 
         /// <summary>
         /// Returns the specified elements of the list stored at key. The offsets start and stop are zero-based indexes, with 0 being the first element of the list (the head of the list), 1 being the next element and so on.
@@ -288,7 +269,7 @@ namespace Grpc.MicroService.Redis
         /// </summary>
         /// <returns>list of elements in the specified range.</returns>
         /// <remarks>http://redis.io/commands/lrange</remarks>
-        T[] ListRange<T>(string key, long start = 0, long stop = -1, CommandFlags flags = CommandFlags.None);
+        T[] ListRange<T>(string key, long start = 0, long stop = -1);
 
         /// <summary>
         /// Removes the first count occurrences of elements equal to value from the list stored at key. The count argument influences the operation in the following ways:
@@ -298,20 +279,20 @@ namespace Grpc.MicroService.Redis
         /// </summary>
         /// <returns>the number of removed elements.</returns>
         /// <remarks>http://redis.io/commands/lrem</remarks>
-        long ListRemove(string key, object value, long count = 0, CommandFlags flags = CommandFlags.None);
+        long ListRemove(string key, object value, long count = 0);
 
         /// <summary>
         /// Removes and returns the last element of the list stored at key.
         /// </summary>
         /// <remarks>http://redis.io/commands/rpop</remarks>
-        T ListRightPop<T>(string key, CommandFlags flags = CommandFlags.None);
+        T ListRightPop<T>(string key);
 
         /// <summary>
         /// Atomically returns and removes the last element (tail) of the list stored at source, and pushes the element at the first element (head) of the list stored at destination.
         /// </summary>
         /// <returns>the element being popped and pushed.</returns>
         /// <remarks>http://redis.io/commands/rpoplpush</remarks>
-        T ListRightPopLeftPush<T>(string source, string destination, CommandFlags flags = CommandFlags.None);
+        T ListRightPopLeftPush<T>(string source, string destination);
 
         /// <summary>
         /// Insert the specified value at the tail of the list stored at key. If key does not exist, it is created as empty list before performing the push operation.
@@ -319,7 +300,7 @@ namespace Grpc.MicroService.Redis
         /// <returns>the length of the list after the push operation.</returns>
         /// <remarks>http://redis.io/commands/rpush</remarks>
         /// <remarks>http://redis.io/commands/rpushx</remarks>
-        long ListRightPush(string key, object value, When when = When.Always, CommandFlags flags = CommandFlags.None);
+        long ListRightPush(string key, object value);
 
         /// <summary>
         /// Insert all the specified values at the tail of the list stored at key. If key does not exist, it is created as empty list before performing the push operation. 
@@ -327,13 +308,13 @@ namespace Grpc.MicroService.Redis
         /// </summary>
         /// <returns>the length of the list after the push operation.</returns>
         /// <remarks>http://redis.io/commands/rpush</remarks>
-        long ListRightPush(string key, object[] values, CommandFlags flags = CommandFlags.None);
+        long ListRightPush(string key, object[] values);
 
         /// <summary>
         /// Sets the list element at index to value. For more information on the index argument, see ListGetByIndex. An error is returned for out of range indexes.
         /// </summary>
         /// <remarks>http://redis.io/commands/lset</remarks>
-        void ListSetByIndex(string key, long index, object value, CommandFlags flags = CommandFlags.None);
+        void ListSetByIndex(string key, long index, object value);
 
         /// <summary>
         /// Trim an existing list so that it will contain only the specified range of elements specified. Both start and stop are zero-based indexes, where 0 is the first element of the list (the head), 1 the next element and so on.
@@ -341,7 +322,7 @@ namespace Grpc.MicroService.Redis
         /// start and end can also be negative numbers indicating offsets from the end of the list, where -1 is the last element of the list, -2 the penultimate element and so on.
         /// </summary>
         /// <remarks>http://redis.io/commands/ltrim</remarks>
-        void ListTrim(string key, long start, long stop, CommandFlags flags = CommandFlags.None);
+        void ListTrim(string key, long start, long stop);
 
         #endregion
 
@@ -365,7 +346,7 @@ namespace Grpc.MicroService.Redis
         /// <remarks>http://redis.io/commands/expire</remarks>
         /// <remarks>http://redis.io/commands/pexpire</remarks>
         /// <remarks>http://redis.io/commands/persist</remarks>
-        bool KeyExpire(RedisKey key, TimeSpan? expiry, CommandFlags flags = CommandFlags.None);
+        bool KeyExpire(string key, TimeSpan? expiry);
 
         /// <summary>
         /// Redis中是否存在指定Key
@@ -373,7 +354,7 @@ namespace Grpc.MicroService.Redis
         /// <param name="key"></param>
         /// <param name="commandFlags"></param>
         /// <returns></returns>
-        bool KeyExists(string key, CommandFlags commandFlags = CommandFlags.None);
+        bool KeyExists(string key);
 
         /// <summary>
         /// 从Redis中移除键
@@ -381,7 +362,7 @@ namespace Grpc.MicroService.Redis
         /// <param name="key"></param>
         /// <param name="commandFlags"></param>
         /// <returns></returns>
-        bool KeyRemove(string key, CommandFlags commandFlags = CommandFlags.None);
+        bool KeyRemove(string key);
 
         /// <summary>
         /// 从Redis中移除多个键
@@ -389,13 +370,14 @@ namespace Grpc.MicroService.Redis
         /// <param name="keys"></param>
         /// <param name="commandFlags"></param>
         /// <returns></returns>
-        void KeyRemove(RedisKey[] keys, CommandFlags commandFlags = CommandFlags.None);
+        void KeyRemove(string[] keys);
 
         /// <summary>
         /// Dispose DB connection 释放DB相关链接
         /// </summary>
         void DbConnectionStop();
         #endregion
+
 
     }
 }

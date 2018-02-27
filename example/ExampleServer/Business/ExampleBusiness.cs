@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Example;
 using ExampleServer.Domain;
-using Microsoft.EntityFrameworkCore;
+using Grpc.MicroService.EF;
 
 namespace ExampleServer.Business
 {

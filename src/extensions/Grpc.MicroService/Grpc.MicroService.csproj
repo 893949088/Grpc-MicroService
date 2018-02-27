@@ -10,7 +10,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Grpc.MicroService.Core\Grpc.MicroService.Core.csproj" />
-    <ProjectReference Include="..\Grpc.MicroService.EF.MySQL\Grpc.MicroService.EF.MySQL.csproj" />
   </ItemGroup>
 
 </Project>

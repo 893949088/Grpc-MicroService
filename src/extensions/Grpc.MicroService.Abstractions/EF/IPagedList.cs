@@ -2,7 +2,7 @@
 
 using System.Collections.Generic;
 
-namespace Microsoft.EntityFrameworkCore
+namespace Grpc.MicroService.EF
 {
     /// <summary>
     /// Provides the interface(s) for paged list of any type.

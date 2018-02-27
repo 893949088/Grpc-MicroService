@@ -5,10 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Grpc.MicroService.Redis.Internal
+namespace Grpc.MicroService.Redis
 {
-    public class RedisRepository : IRedisRepository
+    public class StackExchangeRedisRespository : IRedisRepository
     {
+
         #region 初始化
 
         private IDatabase _db;
@@ -17,7 +18,7 @@ namespace Grpc.MicroService.Redis.Internal
         /// <summary>
         /// 构造函数，在其中注册Redis事件
         /// </summary>
-        public RedisRepository(string configuration)
+        public StackExchangeRedisRespository(string configuration)
         {
             //const string configuration = "{0},abortConnect=false,defaultDatabase={1},ssl=false,ConnectTimeout={2},allowAdmin=true,connectRetry={3}";
             _redis = ConnectionMultiplexer.Connect(configuration);
@@ -48,10 +49,10 @@ namespace Grpc.MicroService.Redis.Internal
         /// <param name="value">value of key of type T</param>
         /// <param name="expiresAt">time span of expiration</param>
         /// <returns>true or false</returns>
-        public bool StringSet<T>(string key, T value, TimeSpan? expiresAt = default(TimeSpan?), When when = When.Always, CommandFlags commandFlags = CommandFlags.None) where T : class
+        public bool StringSet<T>(string key, T value, TimeSpan? expiresAt = default(TimeSpan?)) where T : class
         {
             var stringContent = SerializeContent(value);
-            return _db.StringSet(key, stringContent, expiresAt, when, commandFlags);
+            return _db.StringSet(key, stringContent, expiresAt);
         }
 
         /// <summary>
@@ -62,11 +63,10 @@ namespace Grpc.MicroService.Redis.Internal
         /// <param name="value">value of key of type object</param>
         /// <param name="expiresAt">time span of expiration</param>
         /// <returns>true or false</returns>
-        public bool StringSet<T>(string key, object value, TimeSpan? expiresAt = default(TimeSpan?), When when = When.Always, CommandFlags commandFlags = CommandFlags.None) where T : class
+        public bool StringSet<T>(string key, object value, TimeSpan? expiresAt = default(TimeSpan?)) where T : class
         {
             var stringContent = SerializeContent(value);
-
-            return _db.StringSet(key, stringContent, expiresAt, when, commandFlags);
+            return _db.StringSet(key, stringContent, expiresAt);
         }
 
 
@@ -78,9 +78,9 @@ namespace Grpc.MicroService.Redis.Internal
         /// <param name="value">value of key of type object</param>
         /// <param name="expiresAt">time span of expiration</param>
         /// <returns>true or false</returns>
-        public bool StringSetByValue(string key, RedisValue value, TimeSpan? expiresAt = default(TimeSpan?), When when = When.Always, CommandFlags commandFlags = CommandFlags.None)
+        public bool StringSetByValue(string key, RedisValue value, TimeSpan? expiresAt = default(TimeSpan?))
         {
-            return _db.StringSet(key, value, expiresAt, when, commandFlags);
+            return _db.StringSet(key, value, expiresAt);
         }
 
         /// <summary>
@@ -88,9 +88,9 @@ namespace Grpc.MicroService.Redis.Internal
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public long StringLength(string key, CommandFlags commandFlags = CommandFlags.None)
+        public long StringLength(string key)
         {
-            return _db.StringLength(key, commandFlags);
+            return _db.StringLength(key);
         }
 
         /// <summary>
@@ -99,9 +99,9 @@ namespace Grpc.MicroService.Redis.Internal
         /// <param name="key"></param>
         /// <param name="appendVal"></param>
         /// <returns>总长度</returns>
-        public long StringAppend(string key, string appendVal, CommandFlags commandFlags = CommandFlags.None)
+        public long StringAppend(string key, string appendVal)
         {
-            return _db.StringAppend(key, appendVal, commandFlags);
+            return _db.StringAppend(key, appendVal);
         }
 
         /// <summary>
@@ -111,9 +111,9 @@ namespace Grpc.MicroService.Redis.Internal
         /// <param name="newVal"></param>
         /// <param name="commandFlags"></param>
         /// <returns>OldVal</returns>
-        public string StringGetAndSet(string key, string newVal, CommandFlags commandFlags = CommandFlags.None)
+        public string StringGetAndSet(string key, string newVal)
         {
-            return DeserializeContent<string>(_db.StringGetSet(key, newVal, commandFlags));
+            return DeserializeContent<string>(_db.StringGetSet(key, newVal));
         }
 
         /// <summary>
@@ -126,10 +126,10 @@ namespace Grpc.MicroService.Redis.Internal
         /// <param name="when"></param>
         /// <param name="commandFlags"></param>
         /// <returns></returns>
-        public bool StringUpdate<T>(string key, T value, TimeSpan expiresAt, When when = When.Always, CommandFlags commandFlags = CommandFlags.None) where T : class
+        public bool StringUpdate<T>(string key, T value, TimeSpan expiresAt) where T : class
         {
             var stringContent = SerializeContent(value);
-            return _db.StringSet(key, stringContent, expiresAt, when, commandFlags);
+            return _db.StringSet(key, stringContent, expiresAt);
         }
 
         /// <summary>
@@ -139,9 +139,9 @@ namespace Grpc.MicroService.Redis.Internal
         /// <param name="val">可以为负</param>
         /// <param name="commandFlags"></param>
         /// <returns>增长后的值</returns>
-        public double StringIncrement(string key, double val, CommandFlags commandFlags = CommandFlags.None)
+        public double StringIncrement(string key, double val)
         {
-            return _db.StringIncrement(key, val, commandFlags);
+            return _db.StringIncrement(key, val);
         }
 
         /// <summary>
@@ -150,11 +150,11 @@ namespace Grpc.MicroService.Redis.Internal
         /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
         /// <returns>T</returns>
-        public T StringGet<T>(string key, CommandFlags commandFlags = CommandFlags.None) where T : class
+        public T StringGet<T>(string key) where T : class
         {
             try
             {
-                RedisValue myString = _db.StringGet(key, commandFlags);
+                RedisValue myString = _db.StringGet(key);
 
                 if (myString.HasValue && !myString.IsNullOrEmpty)
                 {
@@ -178,9 +178,9 @@ namespace Grpc.MicroService.Redis.Internal
         /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
         /// <returns>T</returns>
-        public string StringGet(string key, CommandFlags commandFlags = CommandFlags.None)
+        public string StringGet(string key)
         {
-            return _db.StringGet(key, commandFlags);
+            return _db.StringGet(key);
         }
 
         #endregion
@@ -189,9 +189,10 @@ namespace Grpc.MicroService.Redis.Internal
         /// <summary>
         /// Redis散列数据类型  批量新增
         /// </summary>
-        public void HashSet(string key, List<HashEntry> hashEntrys, CommandFlags flags = CommandFlags.None)
+        public void HashSet<T>(string key, IEnumerable<KeyValuePair<string, T>> keyvalues)
         {
-            _db.HashSet(key, hashEntrys.ToArray(), flags);
+            var hashEntrys = keyvalues.Select(p => new HashEntry(p.Key, SerializeContent(p.Value)));
+            _db.HashSet(key, hashEntrys.ToArray());
         }
         /// <summary>
         /// Redis散列数据类型  新增一个
@@ -199,9 +200,9 @@ namespace Grpc.MicroService.Redis.Internal
         /// <param name="key"></param>
         /// <param name="field"></param>
         /// <param name="val"></param>
-        public void HashSet<T>(string key, string field, T val, When when = When.Always, CommandFlags flags = CommandFlags.None)
+        public void HashSet<T>(string key, string field, T val)
         {
-            _db.HashSet(key, field, SerializeContent(val), when, flags);
+            _db.HashSet(key, field, SerializeContent(val));
         }
         /// <summary>
         ///  Redis散列数据类型 获取指定key的指定field
@@ -219,9 +220,10 @@ namespace Grpc.MicroService.Redis.Internal
         /// <param name="key"></param>
         /// <param name="flags"></param>
         /// <returns></returns>
-        public HashEntry[] HashGetAll(string key, CommandFlags flags = CommandFlags.None)
+        public IEnumerable<KeyValuePair<string, T>> HashGetAll<T>(string key)
         {
-            return _db.HashGetAll(key, flags);
+            var allHashEntrys = _db.HashGetAll(key);
+            return allHashEntrys.Select(p => new KeyValuePair<string, T>(p.Name, DeserializeContent<T>(p.Value)));
         }
         /// <summary>
         /// Redis散列数据类型 获取key中所有field的值。
@@ -230,15 +232,9 @@ namespace Grpc.MicroService.Redis.Internal
         /// <param name="key"></param>
         /// <param name="flags"></param>
         /// <returns></returns>
-        public List<T> HashGetAllValues<T>(string key, CommandFlags flags = CommandFlags.None)
+        public IEnumerable<T> HashGetAllValues<T>(string key)
         {
-            List<T> list = new List<T>();
-            var hashVals = _db.HashValues(key, flags).ToArray();
-            foreach (var item in hashVals)
-            {
-                list.Add(DeserializeContent<T>(item));
-            }
-            return list;
+            return _db.HashValues(key).Select(p=> DeserializeContent<T>(p));
         }
 
         /// <summary>
@@ -247,9 +243,9 @@ namespace Grpc.MicroService.Redis.Internal
         /// <param name="key"></param>
         /// <param name="flags"></param>
         /// <returns></returns>
-        public string[] HashGetAllKeys(string key, CommandFlags flags = CommandFlags.None)
+        public string[] HashGetAllKeys(string key)
         {
-            return _db.HashKeys(key, flags).ToStringArray();
+            return _db.HashKeys(key).ToStringArray();
         }
         /// <summary>
         ///  Redis散列数据类型  单个删除field
@@ -258,9 +254,9 @@ namespace Grpc.MicroService.Redis.Internal
         /// <param name="hashField"></param>
         /// <param name="flags"></param>
         /// <returns></returns>
-        public bool HashDelete(string key, string hashField, CommandFlags flags = CommandFlags.None)
+        public bool HashDelete(string key, string hashField)
         {
-            return _db.HashDelete(key, hashField, flags);
+            return _db.HashDelete(key, hashField);
         }
         /// <summary>
         ///  Redis散列数据类型  批量删除field
@@ -269,14 +265,14 @@ namespace Grpc.MicroService.Redis.Internal
         /// <param name="hashFields"></param>
         /// <param name="flags"></param>
         /// <returns></returns>
-        public long HashDelete(string key, string[] hashFields, CommandFlags flags = CommandFlags.None)
+        public long HashDelete(string key, string[] hashFields)
         {
             List<RedisValue> list = new List<RedisValue>();
             for (int i = 0; i < hashFields.Length; i++)
             {
                 list.Add(hashFields[i]);
             }
-            return _db.HashDelete(key, list.ToArray(), flags);
+            return _db.HashDelete(key, list.ToArray());
         }
         /// <summary>
         ///  Redis散列数据类型 判断指定键中是否存在此field
@@ -285,9 +281,9 @@ namespace Grpc.MicroService.Redis.Internal
         /// <param name="field"></param>
         /// <param name="flags"></param>
         /// <returns></returns>
-        public bool HashExists(string key, string field, CommandFlags flags = CommandFlags.None)
+        public bool HashExists(string key, string field)
         {
-            return _db.HashExists(key, field, flags);
+            return _db.HashExists(key, field);
         }
         /// <summary>
         /// Redis散列数据类型  获取指定key中field数量
@@ -295,9 +291,9 @@ namespace Grpc.MicroService.Redis.Internal
         /// <param name="key"></param>
         /// <param name="flags"></param>
         /// <returns></returns>
-        public long HashLength(string key, CommandFlags flags = CommandFlags.None)
+        public long HashLength(string key)
         {
-            return _db.HashLength(key, flags);
+            return _db.HashLength(key);
         }
         /// <summary>
         /// Redis散列数据类型  为key中指定field增加incrVal值
@@ -307,87 +303,87 @@ namespace Grpc.MicroService.Redis.Internal
         /// <param name="incrVal"></param>
         /// <param name="flags"></param>
         /// <returns></returns>
-        public double HashIncrement(string key, string field, double incrVal, CommandFlags flags = CommandFlags.None)
+        public double HashIncrement(string key, string field, double incrVal)
         {
-            return _db.HashIncrement(key, field, incrVal, flags);
+            return _db.HashIncrement(key, field, incrVal);
         }
         #endregion
 
         #region Redis List列表数据类型操作
 
-        public T ListGetByIndex<T>(string key, long index, CommandFlags flags = CommandFlags.None)
+        public T ListGetByIndex<T>(string key, long index)
         {
-            return DeserializeContent<T>(_db.ListGetByIndex(key, index, flags));
+            return DeserializeContent<T>(_db.ListGetByIndex(key, index));
         }
 
-        public long ListInsertAfter(string key, object pivot, object value, CommandFlags flags = CommandFlags.None)
+        public long ListInsertAfter(string key, object pivot, object value)
         {
-            return _db.ListInsertAfter(key, SerializeContent(pivot), SerializeContent(value), flags);
+            return _db.ListInsertAfter(key, SerializeContent(pivot), SerializeContent(value));
         }
 
-        public long ListInsertBefore(string key, object pivot, object value, CommandFlags flags = CommandFlags.None)
+        public long ListInsertBefore(string key, object pivot, object value)
         {
-            return _db.ListInsertBefore(key, SerializeContent(pivot), SerializeContent(value), flags);
+            return _db.ListInsertBefore(key, SerializeContent(pivot), SerializeContent(value));
         }
 
-        public T ListLeftPop<T>(string key, CommandFlags flags = CommandFlags.None)
+        public T ListLeftPop<T>(string key)
         {
-            return DeserializeContent<T>(_db.ListLeftPop(key, flags));
+            return DeserializeContent<T>(_db.ListLeftPop(key));
         }
 
-        public long ListLeftPush(string key, object[] values, CommandFlags flags = CommandFlags.None)
+        public long ListLeftPush(string key, object[] values)
         {
-            return _db.ListLeftPush(key, values.Select(s => (RedisValue)SerializeContent(s)).ToArray(), flags);
+            return _db.ListLeftPush(key, values.Select(s => (RedisValue)SerializeContent(s)).ToArray());
         }
 
-        public long ListLeftPush(string key, object value, When when = When.Always, CommandFlags flags = CommandFlags.None)
+        public long ListLeftPush(string key, object value)
         {
-            return _db.ListLeftPush(key, SerializeContent(value), when, flags);
+            return _db.ListLeftPush(key, SerializeContent(value));
         }
 
-        public long ListLength(string key, CommandFlags flags = CommandFlags.None)
+        public long ListLength(string key)
         {
-            return _db.ListLength(key, flags);
+            return _db.ListLength(key);
         }
 
-        public T[] ListRange<T>(string key, long start = 0, long stop = -1, CommandFlags flags = CommandFlags.None)
+        public T[] ListRange<T>(string key, long start = 0, long stop = -1)
         {
-            return _db.ListRange(key, start, stop, flags).Select(s => DeserializeContent<T>(s)).ToArray();
+            return _db.ListRange(key, start, stop).Select(s => DeserializeContent<T>(s)).ToArray();
         }
 
-        public long ListRemove(string key, object value, long count = 0, CommandFlags flags = CommandFlags.None)
+        public long ListRemove(string key, object value, long count = 0)
         {
-            return _db.ListRemove(key, SerializeContent(value), count, flags);
+            return _db.ListRemove(key, SerializeContent(value), count);
         }
 
-        public T ListRightPop<T>(string key, CommandFlags flags = CommandFlags.None)
+        public T ListRightPop<T>(string key)
         {
-            return DeserializeContent<T>(_db.ListRightPop(key, flags));
+            return DeserializeContent<T>(_db.ListRightPop(key));
         }
 
-        public T ListRightPopLeftPush<T>(string source, string destination, CommandFlags flags = CommandFlags.None)
+        public T ListRightPopLeftPush<T>(string source, string destination)
         {
-            return DeserializeContent<T>(_db.ListRightPopLeftPush(source, destination, flags));
+            return DeserializeContent<T>(_db.ListRightPopLeftPush(source, destination));
         }
 
-        public long ListRightPush(string key, object[] values, CommandFlags flags = CommandFlags.None)
+        public long ListRightPush(string key, object[] values)
         {
-            return _db.ListRightPush(key, values.Select(s => (RedisValue)SerializeContent(s)).ToArray(), flags);
+            return _db.ListRightPush(key, values.Select(s => (RedisValue)SerializeContent(s)).ToArray());
         }
 
-        public long ListRightPush(string key, object value, When when = When.Always, CommandFlags flags = CommandFlags.None)
+        public long ListRightPush(string key, object value)
         {
-            return _db.ListRightPush(key, SerializeContent(value), when, flags);
+            return _db.ListRightPush(key, SerializeContent(value));
         }
 
-        public void ListSetByIndex(string key, long index, object value, CommandFlags flags = CommandFlags.None)
+        public void ListSetByIndex(string key, long index, object value)
         {
-            _db.ListSetByIndex(key, index, SerializeContent(value), flags);
+            _db.ListSetByIndex(key, index, SerializeContent(value));
         }
 
-        public void ListTrim(string key, long start, long stop, CommandFlags flags = CommandFlags.None)
+        public void ListTrim(string key, long start, long stop)
         {
-            _db.ListTrim(key, start, stop, flags);
+            _db.ListTrim(key, start, stop);
         }
 
         #endregion
@@ -414,9 +410,9 @@ namespace Grpc.MicroService.Redis.Internal
         /// <param name="expiry"></param>
         /// <param name="flags"></param>
         /// <returns></returns>
-        public bool KeyExpire(RedisKey key, TimeSpan? expiry, CommandFlags flags = CommandFlags.None)
+        public bool KeyExpire(string key, TimeSpan? expiry)
         {
-            return _db.KeyExpire(key, expiry, flags);
+            return _db.KeyExpire(key, expiry);
         }
 
         /// <summary>
@@ -424,9 +420,9 @@ namespace Grpc.MicroService.Redis.Internal
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public bool KeyExists(string key, CommandFlags commandFlags = CommandFlags.None)
+        public bool KeyExists(string key)
         {
-            return _db.KeyExists(key, commandFlags);
+            return _db.KeyExists(key);
         }
 
         /// <summary>
@@ -442,17 +438,17 @@ namespace Grpc.MicroService.Redis.Internal
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public bool KeyRemove(string key, CommandFlags commandFlags = CommandFlags.None)
+        public bool KeyRemove(string key)
         {
-            return _db.KeyDelete(key, commandFlags);
+            return _db.KeyDelete(key);
         }
         /// <summary>
         /// 从Redis中移除多个键
         /// </summary>
         /// <param name="keys"></param>
-        public void KeyRemove(RedisKey[] keys, CommandFlags commandFlags = CommandFlags.None)
+        public void KeyRemove(string[] keys)
         {
-            _db.KeyDelete(keys, commandFlags);
+            _db.KeyDelete(keys.Select(p => (RedisKey)p).ToArray());
         }
         #endregion
 
@@ -469,6 +465,12 @@ namespace Grpc.MicroService.Redis.Internal
             return JsonConvert.DeserializeObject<T>(myString);
         }
 
+        public void Dispose()
+        {
+            _redis.Dispose();
+        }
+
         #endregion
+
     }
 }

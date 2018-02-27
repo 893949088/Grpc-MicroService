@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Grpc.MicroService.EF;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
