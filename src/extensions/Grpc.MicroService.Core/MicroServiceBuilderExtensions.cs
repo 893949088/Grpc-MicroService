@@ -10,7 +10,7 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class MicroServiceBuilderExtensions
     {
-        public static IMicroServiceBuilder AddService<T>(this IMicroServiceBuilder builder) where T : class, IGrpcService
+        public static IMicroServiceBuilder RegisterService<T>(this IMicroServiceBuilder builder) where T : class, IGrpcService
         {
             builder.Services.AddScoped<T>();
             builder.Services.AddSingleton<IGrpcService, T>();

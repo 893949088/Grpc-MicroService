@@ -24,7 +24,7 @@ namespace ExampleServer
 
             services.AddMicroService(builder =>
             {
-                builder.AddService<ExampleServiceImpl>();
+                builder.RegisterService<ExampleServiceImpl>();
                 builder.AddMysql(Configuration.GetConnectionString("DbConnectionString"));
             });
         }
