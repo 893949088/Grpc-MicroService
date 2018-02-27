@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MySql.Data.EntityFrameworkCore" Version="8.0.10-rc" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Grpc.MicroService.Core\Grpc.MicroService.Core.csproj" />
+    <ProjectReference Include="..\Grpc.MicroService.EF\Grpc.MicroService.EF.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grpc.Hosting" Version="0.1.0-pre1" />
+    <PackageReference Include="Grpc.MicroService" Version="0.1.0-pre1" />
+    <ProjectReference Include="..\$ext_safeprojectname$.Protobuf\$ext_safeprojectname$.Protobuf.csproj" />
+  </ItemGroup>
+
+</Project>

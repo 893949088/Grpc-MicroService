@@ -1,0 +1,22 @@
+﻿syntax = "proto3";
+
+package Example;
+
+option csharp_namespace = "Example";
+
+service ExampleService{
+	rpc AddUser(AddUserArgs)returns(AddUserReply);
+}
+
+message AddUserArgs{
+	string Name=1;
+}
+
+message AddUserReply{
+	bool Success=1;
+	string Code=2;
+	string Message=3;
+	message ReplyData{
+	}
+	ReplyData Data=4;
+}

@@ -1,0 +1,22 @@
+﻿syntax = "proto3";
+
+package $ext_safeprojectname$.Service;
+
+option csharp_namespace = "$ext_safeprojectname$.Service";
+
+service $ext_safeprojectname$Service{
+	rpc AddUser(AddUserArgs)returns(AddUserReply);
+}
+
+message AddUserArgs{
+	string Name=1;
+}
+
+message AddUserReply{
+	bool Success=1;
+	string Code=2;
+	string Message=3;
+	message ReplyData{
+	}
+	ReplyData Data=4;
+}

@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<VSTemplate Version="3.0.0" Type="Project" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" xmlns:sdk="http://schemas.microsoft.com/developer/vstemplate-sdkextension/2010">
+  <TemplateData>
+    <Name>ProtobufTemplate</Name>
+    <ProjectType>CSharp</ProjectType>
+    <RequiredFrameworkVersion>2.0</RequiredFrameworkVersion>
+  </TemplateData>
+  <TemplateContent>
+    <Project File="protobuf.csproj" TargetFileName="$ext_safeprojectname$.Protobuf.csproj">
+      <Folder Name=".tools">
+        <ProjectItem>grpc_csharp_plugin.exe</ProjectItem>
+        <ProjectItem>grpc_java_plugin.exe</ProjectItem>
+        <ProjectItem>protoc.exe</ProjectItem>
+      </Folder>
+      <Folder Name="proto">
+        <ProjectItem ReplaceParameters="true">service.proto</ProjectItem>
+      </Folder>
+      <Folder Name="service">        
+      </Folder>
+    </Project>
+  </TemplateContent>
+</VSTemplate>

@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<VSTemplate Version="3.0.0" Type="Project" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" xmlns:sdk="http://schemas.microsoft.com/developer/vstemplate-sdkextension/2010">
+  <TemplateData>
+    <Name>ServiceTemplate</Name>
+    <ProjectType>CSharp</ProjectType>
+    <RequiredFrameworkVersion>2.0</RequiredFrameworkVersion>
+    <CreateInPlace>true</CreateInPlace>
+    <LocationField>Enabled</LocationField>
+    <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
+  </TemplateData>
+  <TemplateContent>
+    <Project File="service.csproj" TargetFileName="$ext_safeprojectname$.Service.csproj" ReplaceParameters="true">
+      <Folder Name="Business">
+        <ProjectItem ReplaceParameters="true" TargetFileName="$ext_safeprojectname$Business.cs" OpenInEditor="true">Business.cs</ProjectItem>
+        <ProjectItem ReplaceParameters="true" TargetFileName="I$ext_safeprojectname$Business.cs" OpenInEditor="true">IBusiness.cs</ProjectItem>
+      </Folder>
+      <Folder Name="Domain">
+      </Folder>
+      <Folder Name="Service">
+        <ProjectItem ReplaceParameters="true" TargetFileName="$ext_safeprojectname$ServiceImpl.cs" OpenInEditor="true">ServiceImpl.cs</ProjectItem>
+      </Folder>
+      <ProjectItem ReplaceParameters="true" TargetFileName="appsettings.json">appsettings.json</ProjectItem>
+      <ProjectItem ReplaceParameters="true" TargetFileName="Program.cs" OpenInEditor="true">Program.cs</ProjectItem>
+      <ProjectItem ReplaceParameters="true" TargetFileName="Startup.cs" OpenInEditor="true">Startup.cs</ProjectItem>
+    </Project>
+  </TemplateContent>
+</VSTemplate>
