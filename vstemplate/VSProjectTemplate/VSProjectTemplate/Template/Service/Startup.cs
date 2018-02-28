@@ -23,7 +23,7 @@ namespace $ext_safeprojectname$.Service
 
             services.AddMicroService(builder =>
             {
-                builder.AddService<$ext_safeprojectname$ServiceImpl>();
+                builder.RegisterService<$ext_safeprojectname$ServiceImpl>();
                 builder.AddMysql(Configuration.GetConnectionString("DbConnectionString"));
             });
         }

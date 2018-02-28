@@ -24,6 +24,8 @@ namespace Grpc.Server.Internal
             this._methods = serviceType.GetMethods();
         }
 
+        #region Handler
+
         public override Task<TResponse> UnaryServerHandler<TRequest, TResponse>(TRequest request, ServerCallContext context, UnaryServerMethod<TRequest, TResponse> continuation)
         {
             var methodName = context.Method.Split('/').Last();
@@ -83,5 +85,36 @@ namespace Grpc.Server.Internal
                 return serviceResult as Task;
             }
         }
+
+        #endregion
+
+        #region Call
+
+        public override AsyncUnaryCall<TResponse> AsyncUnaryCall<TRequest, TResponse>(TRequest request, ClientInterceptorContext<TRequest, TResponse> context, AsyncUnaryCallContinuation<TRequest, TResponse> continuation)
+        {
+            return base.AsyncUnaryCall(request, context, continuation);
+        }
+
+        public override AsyncClientStreamingCall<TRequest, TResponse> AsyncClientStreamingCall<TRequest, TResponse>(ClientInterceptorContext<TRequest, TResponse> context, AsyncClientStreamingCallContinuation<TRequest, TResponse> continuation)
+        {
+            return base.AsyncClientStreamingCall(context, continuation);
+        }
+
+        public override AsyncServerStreamingCall<TResponse> AsyncServerStreamingCall<TRequest, TResponse>(TRequest request, ClientInterceptorContext<TRequest, TResponse> context, AsyncServerStreamingCallContinuation<TRequest, TResponse> continuation)
+        {
+            return base.AsyncServerStreamingCall(request, context, continuation);
+        }
+
+        public override AsyncDuplexStreamingCall<TRequest, TResponse> AsyncDuplexStreamingCall<TRequest, TResponse>(ClientInterceptorContext<TRequest, TResponse> context, AsyncDuplexStreamingCallContinuation<TRequest, TResponse> continuation)
+        {
+            return base.AsyncDuplexStreamingCall(context, continuation);
+        }
+
+        public override TResponse BlockingUnaryCall<TRequest, TResponse>(TRequest request, ClientInterceptorContext<TRequest, TResponse> context, BlockingUnaryCallContinuation<TRequest, TResponse> continuation)
+        {
+            return base.BlockingUnaryCall(request, context, continuation);
+        }
+
+        #endregion
     }
 }

@@ -18,9 +18,9 @@ namespace ExampleServer
             _business = business;
         }
 
-        public override Task<AddUserReply> AddUser(AddUserArgs request, ServerCallContext context)
+        public async override Task<AddUserReply> AddUser(AddUserArgs request, ServerCallContext context)
         {
-            return base.AddUser(request, context);
+            return await _business.AddUser(request);
         }
     }
 }

@@ -27,15 +27,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleClient", "example\Ex
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grpc.MicroService.Monitor", "src\extensions\Grpc.MicroService.Monitor\Grpc.MicroService.Monitor.csproj", "{CBAF24CC-FACA-49D2-BC8C-4900FEBB0FF1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grpc.MicroService.Abstractions", "src\extensions\Grpc.MicroService.Abstractions\Grpc.MicroService.Abstractions.csproj", "{C5A15B0A-2FB7-44C6-89D7-F61B82BF1716}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grpc.MicroService.Abstractions", "src\extensions\Grpc.MicroService.Abstractions\Grpc.MicroService.Abstractions.csproj", "{C5A15B0A-2FB7-44C6-89D7-F61B82BF1716}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grpc.MicroService.Monitor.ELK", "src\extensions\Grpc.MicroService.Monitor.ELK\Grpc.MicroService.Monitor.ELK.csproj", "{2B2C60D7-DF8B-43CC-9F85-EF67186B246D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grpc.MicroService.Monitor.ELK", "src\extensions\Grpc.MicroService.Monitor.ELK\Grpc.MicroService.Monitor.ELK.csproj", "{2B2C60D7-DF8B-43CC-9F85-EF67186B246D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grpc.MicroService.Monitor.Zipkin", "src\extensions\Grpc.MicroService.Monitor.Zipkin\Grpc.MicroService.Monitor.Zipkin.csproj", "{A78A19A8-10E7-4ED0-81B8-9597CDC706E1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grpc.MicroService.Monitor.Zipkin", "src\extensions\Grpc.MicroService.Monitor.Zipkin\Grpc.MicroService.Monitor.Zipkin.csproj", "{A78A19A8-10E7-4ED0-81B8-9597CDC706E1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grpc.MicroService.Monitor.Metrics", "src\extensions\Grpc.MicroService.Monitor.Metrics\Grpc.MicroService.Monitor.Metrics.csproj", "{0B0E353A-09CF-41A5-B9B8-58B691DC047D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grpc.MicroService.Message", "src\extensions\Grpc.MicroService.Message\Grpc.MicroService.Message.csproj", "{E12D711E-F499-460A-9980-DFFB262C4EF9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grpc.MicroService.Message", "src\extensions\Grpc.MicroService.Message\Grpc.MicroService.Message.csproj", "{E12D711E-F499-460A-9980-DFFB262C4EF9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grpc.MicroService.Job", "src\extensions\Grpc.MicroService.Job\Grpc.MicroService.Job.csproj", "{C55462DF-C2AD-4C23-BF60-BFE9F1F6ED2D}"
 EndProject
@@ -43,9 +43,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grpc.MicroService.Job.Quart
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grpc.MicroService.Message.RabbitMQ", "src\extensions\Grpc.MicroService.Message.RabbitMQ\Grpc.MicroService.Message.RabbitMQ.csproj", "{3FCDF3EC-4006-408C-9349-990BD408DE57}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grpc.MicroService.Cache", "src\extensions\Grpc.MicroService.Cache\Grpc.MicroService.Cache.csproj", "{F3AF9239-CF45-48B7-8090-1E01F985C763}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grpc.MicroService.Cache", "src\extensions\Grpc.MicroService.Cache\Grpc.MicroService.Cache.csproj", "{F3AF9239-CF45-48B7-8090-1E01F985C763}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grpc.MicroService.Message.Kafka", "src\extensions\Grpc.MicroService.Message.Kafka\Grpc.MicroService.Message.Kafka.csproj", "{7EE3748F-2894-4B15-ADA8-C101DD754640}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grpc.MicroService.Storage", "src\extensions\Grpc.MicroService.Storage\Grpc.MicroService.Storage.csproj", "{38FD488B-6985-43C8-8502-22ADDF1D1B9A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -125,6 +127,10 @@ Global
 		{7EE3748F-2894-4B15-ADA8-C101DD754640}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7EE3748F-2894-4B15-ADA8-C101DD754640}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7EE3748F-2894-4B15-ADA8-C101DD754640}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38FD488B-6985-43C8-8502-22ADDF1D1B9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38FD488B-6985-43C8-8502-22ADDF1D1B9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38FD488B-6985-43C8-8502-22ADDF1D1B9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38FD488B-6985-43C8-8502-22ADDF1D1B9A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -150,6 +156,7 @@ Global
 		{3FCDF3EC-4006-408C-9349-990BD408DE57} = {F4AEC077-EC1C-4476-87E2-B6828B0CE7D6}
 		{F3AF9239-CF45-48B7-8090-1E01F985C763} = {F4AEC077-EC1C-4476-87E2-B6828B0CE7D6}
 		{7EE3748F-2894-4B15-ADA8-C101DD754640} = {F4AEC077-EC1C-4476-87E2-B6828B0CE7D6}
+		{38FD488B-6985-43C8-8502-22ADDF1D1B9A} = {F4AEC077-EC1C-4476-87E2-B6828B0CE7D6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BF30C72C-DA95-4373-AD52-6333B4BD6752}

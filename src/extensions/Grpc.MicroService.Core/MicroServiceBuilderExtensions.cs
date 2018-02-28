@@ -30,5 +30,6 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.AddSingleton<IRedisRepository>(p => new StackExchangeRedisRespository(redisConnectionString));
             return builder;
         }
+        
     }
 }

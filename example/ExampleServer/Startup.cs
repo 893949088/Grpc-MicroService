@@ -31,7 +31,10 @@ namespace ExampleServer
 
         public void Configure(IGrpcServer app, ILoggerFactory loggerFactory)
         {
-            app.UseMicroService();
+            app.UseMicroService(config =>
+            {
+
+            });
         }
     }
 }

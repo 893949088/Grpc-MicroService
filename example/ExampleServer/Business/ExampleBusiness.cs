@@ -5,20 +5,23 @@ using System.Threading.Tasks;
 using Example;
 using ExampleServer.Domain;
 using Grpc.MicroService.EF;
+using Microsoft.Extensions.Logging;
 
 namespace ExampleServer.Business
 {
     public class ExampleBusiness : IExampleBusiness
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger _logger;
 
         public ExampleBusiness(
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            ILoggerFactory loggerFactory)
         {
             _unitOfWork = unitOfWork;
+            _logger = loggerFactory.CreateLogger("business");
         }
-
-
+        
         public async Task<AddUserReply> AddUser(AddUserArgs args)
         {
             var user = _unitOfWork.GetRepository<User>();
