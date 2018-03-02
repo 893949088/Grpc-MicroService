@@ -1,8 +1,10 @@
 ﻿using Grpc.Core;
 using Grpc.Hosting.Builder;
 using Grpc.Hosting.Internal;
+using Grpc.Server;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -155,12 +157,18 @@ namespace Grpc.Hosting
 
             services.AddTransient<IGrpcServerFactory, GrpcServerFactory>();
             services.AddOptions();
+#if DEBUG
+            services.AddLogging(logger => logger.SetMinimumLevel(LogLevel.Trace));
+#else
             services.AddLogging();
+#endif
 
             // Conjure up a RequestServices
             services.AddTransient<IStartupFilter, AutoRequestServicesStartupFilter>();
             services.AddTransient<IServiceProviderFactory<IServiceCollection>, DefaultServiceProviderFactory>();
 
+            // Add GrpcContext
+            services.AddScoped<GrpcContext>();
             // Aop 动态代理
             //services.AddInterception(builder => builder.SetDynamicProxyFactory());
 

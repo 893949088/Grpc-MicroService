@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 
 namespace Grpc.Server.Internal
 {
-    public class ServiceMethodInterceptor : Interceptor
+    public class ServerMethodInterceptor : Interceptor
     {
 
         private readonly IServiceProvider _serviceProvider;
         private readonly Type serviceType;
         private readonly IEnumerable<MethodInfo> _methods;
 
-        public ServiceMethodInterceptor(Type serviceType, IServiceProvider serviceProvider)
+        public ServerMethodInterceptor(Type serviceType, IServiceProvider serviceProvider)
         {
             this._serviceProvider = serviceProvider;
             this.serviceType = serviceType;
@@ -34,6 +34,8 @@ namespace Grpc.Server.Internal
             var serviceScopeFactory = _serviceProvider.GetService<IServiceScopeFactory>();
             using (var scope = serviceScopeFactory.CreateScope())
             {
+                var grpcContext = scope.ServiceProvider.GetService<GrpcContext>();
+                grpcContext.Request = context;
                 var serviceInstance = scope.ServiceProvider.GetService(serviceType);
                 var serviceResult = callMethod.Invoke(serviceInstance, new object[] { request, context });
 

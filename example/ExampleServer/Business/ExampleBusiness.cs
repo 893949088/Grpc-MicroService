@@ -24,6 +24,13 @@ namespace ExampleServer.Business
         
         public async Task<AddUserReply> AddUser(AddUserArgs args)
         {
+            _logger.LogTrace("Trace");
+            _logger.LogDebug("Debug");
+            _logger.LogInformation("Info");
+            _logger.LogWarning("Warning");
+            _logger.LogError("Error");
+            _logger.LogCritical("Critical");
+
             var user = _unitOfWork.GetRepository<User>();
             user.Insert(new User
             {

@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Grpc.MicroService
+namespace Grpc.Server
 {
     public interface IMicroServiceConfiguration
     {

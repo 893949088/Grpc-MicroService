@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Example;
+using Grpc.Core;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -24,17 +26,29 @@ namespace ExampleClient
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+
+            services.AddZipkinTracingGrpcClient<ExampleService.ExampleServiceClient>("127.0.0.1:1121", "ExampleService");
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseMvc();
+            app.UseZipkinTracer(Configuration.GetValue<string>("zipkinUrl"), "ExampleAPI");
+
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "default",
+                    template: "api/{controller}/{action}/{id?}");
+            });
+            
         }
+        
     }
 }

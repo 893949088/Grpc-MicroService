@@ -33,7 +33,7 @@ namespace ExampleServer
         {
             app.UseMicroService(config =>
             {
-
+                config.UseZipkinTracer(Configuration.GetValue<string>("zipkinUrl"));
             });
         }
     }

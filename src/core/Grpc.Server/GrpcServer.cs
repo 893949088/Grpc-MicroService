@@ -40,7 +40,7 @@ namespace Grpc.Server
                 var bindMethod = serviceBaseType.GetMethod("BindService", BindingFlags.Public | BindingFlags.Static);
 
                 var serviceDefinition = bindMethod.Invoke(null, new object[] { serviceImpl }) as ServerServiceDefinition;
-                serviceDefinitions.Add(serviceDefinition.Intercept(new ServiceMethodInterceptor(serviceType, this.ApplicationServices)));
+                serviceDefinitions.Add(serviceDefinition.Intercept(new ServerMethodInterceptor(serviceType, this.ApplicationServices)));
             }
 
             return serviceDefinitions;

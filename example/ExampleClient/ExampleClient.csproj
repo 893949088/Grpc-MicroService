@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\extensions.aspnetcore\Microsoft.AspNetCore.Zipkin\Microsoft.AspNetCore.Zipkin.csproj" />
     <ProjectReference Include="..\Example.Protobuf\Example.Protobuf.csproj" />
   </ItemGroup>
 

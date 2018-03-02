@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\core\Grpc.Server\Grpc.Server.csproj" />
+    <ProjectReference Include="..\..\core\Grpc.Hosting\Grpc.Hosting.csproj" />
     <ProjectReference Include="..\Grpc.MicroService.Abstractions\Grpc.MicroService.Abstractions.csproj" />
   </ItemGroup>
 

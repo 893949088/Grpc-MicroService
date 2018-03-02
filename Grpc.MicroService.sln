@@ -47,7 +47,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grpc.MicroService.Cache", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grpc.MicroService.Message.Kafka", "src\extensions\Grpc.MicroService.Message.Kafka\Grpc.MicroService.Message.Kafka.csproj", "{7EE3748F-2894-4B15-ADA8-C101DD754640}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grpc.MicroService.Storage", "src\extensions\Grpc.MicroService.Storage\Grpc.MicroService.Storage.csproj", "{38FD488B-6985-43C8-8502-22ADDF1D1B9A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grpc.MicroService.Storage", "src\extensions\Grpc.MicroService.Storage\Grpc.MicroService.Storage.csproj", "{38FD488B-6985-43C8-8502-22ADDF1D1B9A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "extensions.aspnetcore", "extensions.aspnetcore", "{9DAB9578-52F2-4AF8-A2AC-E95E7747E5C2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.Zipkin", "src\extensions.aspnetcore\Microsoft.AspNetCore.Zipkin\Microsoft.AspNetCore.Zipkin.csproj", "{9F822393-AF66-47A1-91C5-45C0D2545F81}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -131,6 +135,10 @@ Global
 		{38FD488B-6985-43C8-8502-22ADDF1D1B9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{38FD488B-6985-43C8-8502-22ADDF1D1B9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{38FD488B-6985-43C8-8502-22ADDF1D1B9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F822393-AF66-47A1-91C5-45C0D2545F81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F822393-AF66-47A1-91C5-45C0D2545F81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F822393-AF66-47A1-91C5-45C0D2545F81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F822393-AF66-47A1-91C5-45C0D2545F81}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -157,6 +165,8 @@ Global
 		{F3AF9239-CF45-48B7-8090-1E01F985C763} = {F4AEC077-EC1C-4476-87E2-B6828B0CE7D6}
 		{7EE3748F-2894-4B15-ADA8-C101DD754640} = {F4AEC077-EC1C-4476-87E2-B6828B0CE7D6}
 		{38FD488B-6985-43C8-8502-22ADDF1D1B9A} = {F4AEC077-EC1C-4476-87E2-B6828B0CE7D6}
+		{9DAB9578-52F2-4AF8-A2AC-E95E7747E5C2} = {AB42ABF7-9D1B-4E22-9786-380EFA248E85}
+		{9F822393-AF66-47A1-91C5-45C0D2545F81} = {9DAB9578-52F2-4AF8-A2AC-E95E7747E5C2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BF30C72C-DA95-4373-AD52-6333B4BD6752}

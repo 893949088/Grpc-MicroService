@@ -1,4 +1,6 @@
-﻿using Grpc.MicroService.Internal;
+﻿using Grpc.MicroService;
+using Grpc.MicroService.Internal;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using System;
@@ -10,7 +12,7 @@ namespace Grpc.Server
     public static class GrpcServerExtensions
     {
 
-        public static IGrpcServer UseMicroService(this IGrpcServer server, Action<MicroServiceConfiguration> configuration = null)
+        public static IGrpcServer UseMicroService(this IGrpcServer server, Action<IMicroServiceConfiguration> configuration = null)
         {
             var microserviceConfigration = new MicroServiceConfiguration(server);
 
@@ -19,7 +21,7 @@ namespace Grpc.Server
                 configuration(microserviceConfigration);
             }
 
-            var loggerFactory = server.ApplicationServices.GetService(typeof(ILoggerFactory)) as ILoggerFactory;
+            var loggerFactory = server.ApplicationServices.GetService<ILoggerFactory>();
             loggerFactory.AddNLog();
             loggerFactory.ConfigureNLog(microserviceConfigration.NLogBuilder.Build());
 
