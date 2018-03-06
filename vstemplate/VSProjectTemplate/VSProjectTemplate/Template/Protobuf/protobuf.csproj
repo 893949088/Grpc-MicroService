@@ -20,10 +20,10 @@
 
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.5.1" />
-    <PackageReference Include="Grpc" Version="1.10.0-pre1" />
+    <PackageReference Include="Grpc" Version="1.10.0" />
   </ItemGroup>
 
-  <Target Name="RunProtoc" BeforeTargets="Build">
+  <Target Name="RunProtoc" BeforeTargets="Build" Condition="'$(OS)' == 'Windows_NT'">
     <!--Csharp protobuf build-->
     <Exec Command=".tools\protoc -I proto --csharp_out service proto\service.proto --grpc_out service --plugin=protoc-gen-grpc=.tools\grpc_csharp_plugin.exe" />
     <!--Java protobuf build-->

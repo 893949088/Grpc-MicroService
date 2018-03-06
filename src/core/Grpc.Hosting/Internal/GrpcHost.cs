@@ -64,6 +64,8 @@ namespace Grpc.Hosting.Internal
 
             _server.Start();
 
+            Console.WriteLine($"{_options.ApplicationName} listening on ports {string.Join(",",_options.Ports.Select(p=>p.Port).ToArray())}");
+
             _server.ShutdownTask.Wait();
 
         }

@@ -1,41 +1,22 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using Grpc.MicroService.NLog;
-using Grpc.Server;
-using NLog;
-using NLog.Targets;
 
 namespace Grpc.MicroService.Internal
 {
     public class MicroServiceConfiguration : IMicroServiceConfiguration
     {
-        public IGrpcServer Server { get; }
+        public IConfigurationSection Section { get; }
 
-        internal readonly NLogConfigurationBuilder NLogBuilder;
-
-        public MicroServiceConfiguration(IGrpcServer server)
+        public MicroServiceConfiguration(IConfigurationSection section)
         {
-            Server = server;
-            NLogBuilder = new NLogConfigurationBuilder();
+            Section = section;
         }
 
-        public IMicroServiceConfiguration AddNLogRule(LogLevel minLevel, LogLevel maxLevel, Target target, string loggerNamePattern = "*")
+        public string GetConnectionString(string name)
         {
-            NLogBuilder.AddNLogRule(minLevel, maxLevel, target, loggerNamePattern);
-            return this;
-        }
-
-        public IMicroServiceConfiguration AddNLogRule(Target target, string loggerNamePattern = "*")
-        {
-            NLogBuilder.AddNLogRule(target, loggerNamePattern);
-            return this;
-        }
-
-        public IMicroServiceConfiguration AddNLogRule(LogLevel level, Target target, string loggerNamePattern = "*")
-        {
-            NLogBuilder.AddNLogRule(level, target, loggerNamePattern);
-            return this;
+            return Section.GetSection("ConnectionStrings")?[name];
         }
     }
 }

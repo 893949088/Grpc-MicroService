@@ -16,10 +16,10 @@ namespace Grpc.MicroService.EF
 
         //[DatabaseGenerated(DatabaseGeneratedOption.None)]
         [ConcurrencyCheck]
-        public DateTime Optimist { get; set; }
+        public long Optimist { get; set; }
 
-        public DateTime CreateTime { get; set; }
+        public long CreateTime { get; set; }
 
-        public DateTime UpdateTime { get; set; }
+        public long UpdateTime { get; set; }
     }
 }

@@ -616,7 +616,7 @@ namespace Grpc.MicroService.EF
             if (typeof(TEntity).IsAssignableFrom(typeof(OptimistEntity)))
             {
                 var optimistEntity = entity as OptimistEntity;
-                var nowDateTime = DateTime.Now;
+                var nowDateTime = CommonUtility.GetJsTimespan(DateTime.Now);
                 if (!created)
                 {
                     optimistEntity.CreateTime = nowDateTime;

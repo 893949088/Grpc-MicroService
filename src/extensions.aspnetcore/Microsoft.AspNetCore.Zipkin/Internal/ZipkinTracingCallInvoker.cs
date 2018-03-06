@@ -1,4 +1,5 @@
 ﻿using Grpc.Core;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,9 +32,12 @@ namespace Microsoft.AspNetCore.Zipkin.Internal
                 var call = CreateCall(channel, method, host, options, trace);
                 try
                 {
-
-                    dynamic response = Calls.BlockingUnaryCall(call, request);
-                    return response as TResponse;
+                    trace.Record(Annotations.Tag("grpc.host", _target));
+                    trace.Record(Annotations.Tag("grpc.request", JsonConvert.SerializeObject(request)));
+                    var response = Calls.BlockingUnaryCall(call, request);
+                    trace.Record(Annotations.Tag("grpc.response", JsonConvert.SerializeObject(response)));
+                    trace.Record(Annotations.Tag("warning", "warning"));
+                    return response;
                 }
                 finally
                 {
@@ -56,8 +60,10 @@ namespace Microsoft.AspNetCore.Zipkin.Internal
                 var call = CreateCall(channel, method, host, options, trace);
                 try
                 {
-
+                    trace.Record(Annotations.Tag("grpc.host", _target));
+                    trace.Record(Annotations.Tag("grpc.request", JsonConvert.SerializeObject(request)));
                     var response = Calls.AsyncUnaryCall(call, request);
+                    trace.Record(Annotations.Tag("grpc.response", JsonConvert.SerializeObject(response)));
                     return response;
                 }
                 finally
@@ -154,9 +160,12 @@ namespace Microsoft.AspNetCore.Zipkin.Internal
             var headers = new Metadata();
 
             headers.Add(new Metadata.Entry("zipkin_traceid", trace.CurrentSpan.TraceId.ToString()));
+            headers.Add(new Metadata.Entry("zipkin_parentspanid", trace.CurrentSpan.ParentSpanId.ToString()));
             headers.Add(new Metadata.Entry("zipkin_spanid", trace.CurrentSpan.SpanId.ToString()));
             options = new CallOptions(headers: headers);
-            
+
+            trace.Record(Annotations.Tag("grpc.method", method.Name));
+
             return new CallInvocationDetails<TRequest, TResponse>(channel, method, host, options);
 
         }

@@ -35,8 +35,12 @@ namespace Grpc.MicroService.Internal
                 trace.Record(Annotations.ServerRecv());
                 trace.Record(Annotations.ServiceName(_serverName));
                 trace.Record(Annotations.Rpc("grpc"));
-                trace.Record(Annotations.Tag("grpc.method", context.Method));
                 return await continuation(request, context);
+            }
+            catch(Exception ex)
+            {
+                trace.Record(Annotations.Tag("error", ex.ToString()));
+                throw ex;
             }
             finally
             {
@@ -82,10 +86,10 @@ namespace Grpc.MicroService.Internal
                 }
                 if (dictionary.ContainsKey("zipkin_parentspanid"))
                 {
-                    return Trace.CreateFromId(new SpanState(long.Parse(dictionary["zipkin_traceid"]), long.Parse(dictionary["zipkin_parentspanid"]), long.Parse(dictionary["zipkin_spanid"]), SpanFlags.Sampled));
+                    return Trace.CreateFromId(new SpanState(long.Parse(dictionary["zipkin_traceid"]), long.Parse(dictionary["zipkin_parentspanid"]), long.Parse(dictionary["zipkin_spanid"]), SpanFlags.Sampled | SpanFlags.SamplingKnown));
                 }
 
-                return Trace.CreateFromId(new SpanState(long.Parse(dictionary["zipkin_traceid"]), null, long.Parse(dictionary["zipkin_spanid"]), SpanFlags.Sampled));
+                return Trace.CreateFromId(new SpanState(long.Parse(dictionary["zipkin_traceid"]), null, long.Parse(dictionary["zipkin_spanid"]), SpanFlags.Sampled|SpanFlags.SamplingKnown));
 
             }
             catch

@@ -20,6 +20,8 @@ namespace ExampleClient
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
+                .UseUrls("http://*:55600")
+                .UseKestrel()
                 .Build();
     }
 }

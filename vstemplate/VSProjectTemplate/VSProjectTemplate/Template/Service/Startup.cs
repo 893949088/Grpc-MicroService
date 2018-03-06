@@ -24,13 +24,17 @@ namespace $ext_safeprojectname$.Service
             services.AddMicroService(builder =>
             {
                 builder.RegisterService<$ext_safeprojectname$ServiceImpl>();
-                builder.AddMysql(Configuration.GetConnectionString("DbConnectionString"));
+                builder.AddMysql(Configuration.MicroService().GetConnectionString("DbConnectionString"));
             });
         }
 
         public void Configure(IGrpcServer app)
         {
-            app.UseMicroService();
+            app.UseMicroService(config =>
+            {
+                config.UseZipkinTracer(Configuration.MicroService().GetZipkinCollectorUrl());
+                config.UseAliyunLog(Configuration.MicroService().GetAliyunLogConfig());
+            });
         }
     }
 }

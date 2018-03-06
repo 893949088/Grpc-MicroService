@@ -12,18 +12,18 @@ namespace Grpc.Server
     public static class GrpcServerExtensions
     {
 
-        public static IGrpcServer UseMicroService(this IGrpcServer server, Action<IMicroServiceConfiguration> configuration = null)
+        public static IGrpcServer UseMicroService(this IGrpcServer server, Action<IMicroServiceOptions> configuration = null)
         {
-            var microserviceConfigration = new MicroServiceConfiguration(server);
+            var microserviceOptions = new MicroServiceOptions(server);
 
             if (configuration != null)
             {
-                configuration(microserviceConfigration);
+                configuration(microserviceOptions);
             }
 
             var loggerFactory = server.ApplicationServices.GetService<ILoggerFactory>();
             loggerFactory.AddNLog();
-            loggerFactory.ConfigureNLog(microserviceConfigration.NLogBuilder.Build());
+            loggerFactory.ConfigureNLog(microserviceOptions.NLogBuilder.Build());
 
             return server;
         }

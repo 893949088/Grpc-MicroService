@@ -1,5 +1,6 @@
 ﻿using Grpc.Core;
 using Grpc.Server;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -36,7 +37,10 @@ namespace Grpc.MicroService.Internal
             try
             {
 
-                dynamic response = Calls.BlockingUnaryCall(call, request);
+                trace.Record(Annotations.Tag("grpc.host", _target));
+                trace.Record(Annotations.Tag("grpc.request", JsonConvert.SerializeObject(request)));
+                var response = Calls.BlockingUnaryCall(call, request);
+                trace.Record(Annotations.Tag("grpc.response", JsonConvert.SerializeObject(response)));
                 return response as TResponse;
             }
             finally
@@ -62,8 +66,10 @@ namespace Grpc.MicroService.Internal
             var call = CreateCall(channel, method, host, options, trace);
             try
             {
-
+                trace.Record(Annotations.Tag("grpc.host", _target));
+                trace.Record(Annotations.Tag("grpc.request", JsonConvert.SerializeObject(request)));
                 var response = Calls.AsyncUnaryCall(call, request);
+                trace.Record(Annotations.Tag("grpc.response", JsonConvert.SerializeObject(response)));
                 return response;
             }
             finally
@@ -193,10 +199,10 @@ namespace Grpc.MicroService.Internal
                 }
                 if (dictionary.ContainsKey("zipkin_parentspanid"))
                 {
-                    return Trace.CreateFromId(new SpanState(long.Parse(dictionary["zipkin_traceid"]), long.Parse(dictionary["zipkin_parentspanid"]), long.Parse(dictionary["zipkin_spanid"]), SpanFlags.Sampled));
+                    return Trace.CreateFromId(new SpanState(long.Parse(dictionary["zipkin_traceid"]), long.Parse(dictionary["zipkin_parentspanid"]), long.Parse(dictionary["zipkin_spanid"]), SpanFlags.Sampled | SpanFlags.SamplingKnown));
                 }
 
-                return Trace.CreateFromId(new SpanState(long.Parse(dictionary["zipkin_traceid"]), null, long.Parse(dictionary["zipkin_spanid"]), SpanFlags.Sampled));
+                return Trace.CreateFromId(new SpanState(long.Parse(dictionary["zipkin_traceid"]), null, long.Parse(dictionary["zipkin_spanid"]), SpanFlags.Sampled | SpanFlags.SamplingKnown));
 
             }
             catch
