@@ -12,10 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Grpc.Hosting" Version="0.1.0" />
-    <PackageReference Include="Grpc.MicroService" Version="0.1.0" />
-    <PackageReference Include="Grpc.MicroService.Monitor.Log.Aliyun" Version="0.1.0" />
-    <PackageReference Include="Grpc.MicroService.Monitor.Zipkin" Version="0.1.0" />
+    <PackageReference Include="Grpc.Hosting" Version="0.1.0-pre" />
+    <PackageReference Include="Grpc.MicroService" Version="0.1.0-pre" />
+    <PackageReference Include="Grpc.MicroService.Monitor.Log.Aliyun" Version="0.1.0-pre" />
+    <PackageReference Include="Grpc.MicroService.Monitor.Zipkin" Version="0.1.0-pre" />
     <ProjectReference Include="..\$ext_safeprojectname$.Protobuf\$ext_safeprojectname$.Protobuf.csproj" />
   </ItemGroup>
 
