@@ -8,6 +8,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\core\Grpc.Hosting\Grpc.Hosting.csproj" />
     <ProjectReference Include="..\..\src\extensions\Grpc.MicroService.Monitor.Log.Aliyun\Grpc.MicroService.Monitor.Log.Aliyun.csproj" />
+    <ProjectReference Include="..\..\src\extensions\Grpc.MicroService.Monitor.Metrics\Grpc.MicroService.Monitor.Metrics.csproj" />
     <ProjectReference Include="..\..\src\extensions\Grpc.MicroService.Monitor.Zipkin\Grpc.MicroService.Monitor.Zipkin.csproj" />
     <ProjectReference Include="..\..\src\extensions\Grpc.MicroService\Grpc.MicroService.csproj" />
     <ProjectReference Include="..\Example.Protobuf\Example.Protobuf.csproj" />

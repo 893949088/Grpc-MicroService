@@ -11,7 +11,7 @@ namespace $ext_safeprojectname$.Service
             new GrpcHostBuilder()
                 .ApplicationName("$ext_safeprojectname$Service")
                 .UseStartup<Startup>()
-                .BindPort("127.0.0.1", 1121, ServerCredentials.Insecure)
+                .BindPort("0.0.0.0", 1121, ServerCredentials.Insecure)
                 .Build()
                 .Run();
         }

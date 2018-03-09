@@ -621,7 +621,7 @@ namespace Grpc.MicroService.EF
                 {
                     optimistEntity.CreateTime = nowDateTime;
                 }
-                optimistEntity.UpdateTime = nowDateTime;
+                optimistEntity.UpdatedTime = nowDateTime;
             }
         }
         private void TryAutoOptimist(bool created, params TEntity[] entities)

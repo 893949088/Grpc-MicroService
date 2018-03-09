@@ -14,12 +14,12 @@ namespace Grpc.MicroService.EF
     public abstract class OptimistEntity : BaseEntity
     {
 
-        //[DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [ConcurrencyCheck]
-        public long Optimist { get; set; }
+        public DateTime Optimist { get; set; }
 
         public long CreateTime { get; set; }
 
-        public long UpdateTime { get; set; }
+        public long UpdatedTime { get; set; }
     }
 }

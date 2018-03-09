@@ -2,7 +2,21 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>0.1.0</Version>
+    <Version>0.1.0-pre</Version>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="App.Metrics" Version="2.0.0-preview1" />
+    <PackageReference Include="App.Metrics.Extensions.Configuration" Version="2.0.0-preview1" />
+    <PackageReference Include="App.Metrics.Extensions.DependencyInjection" Version="2.0.0-preview1" />
+    <PackageReference Include="App.Metrics.Health" Version="2.0.0-preview1" />
+    <PackageReference Include="App.Metrics.Health.Extensions.Configuration" Version="2.0.0-preview1" />
+    <PackageReference Include="App.Metrics.Health.Extensions.DependencyInjection" Version="2.0.0-preview1" />
+    <PackageReference Include="App.Metrics.Reporting.InfluxDB" Version="2.0.0-preview1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Grpc.MicroService.Core\Grpc.MicroService.Core.csproj" />
+  </ItemGroup>
 
 </Project>

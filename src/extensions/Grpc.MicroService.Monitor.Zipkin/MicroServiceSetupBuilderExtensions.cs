@@ -8,10 +8,10 @@ using Grpc.MicroService.Internal;
 
 namespace Grpc.Server
 {
-    public static class MicroServiceOptionsExtensions
+    public static class MicroServiceSetupBuilderExtensions
     {
 
-        public static IMicroServiceOptions UseZipkinTracer(this IMicroServiceOptions config, string zipkinCollectorUrl)
+        public static IMicroServiceSetupBuilder UseZipkinTracer(this IMicroServiceSetupBuilder config, string zipkinCollectorUrl)
         {
             var loggerFactory = config.Server.ApplicationServices.GetService<ILoggerFactory>();
 

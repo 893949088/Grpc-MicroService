@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Grpc.Server;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace Grpc.MicroService.EF
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
-
+            this.Database.EnsureCreated();
         }
 
         public new DbSet<TEntity> Set<TEntity>() where TEntity : BaseEntity
@@ -29,13 +30,17 @@ namespace Grpc.MicroService.EF
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            var typesToRegister = Assembly.GetEntryAssembly().GetTypes()
-                 .Where(p => p.BaseType == typeof(BaseEntity));
+            var typesToRegister = AppDomain.CurrentDomain.GetAssemblies()
+                .Select(p => p.GetTypes().Where(t => typeof(BaseEntity).IsAssignableFrom(t) && !t.IsAbstract)).ToArray();
 
-            foreach (var type in typesToRegister)
-            {
-                modelBuilder.Entity(type);
-            }
+            //var typesToRegister = Assembly.GetExecutingAssembly().GetTypes()
+            //     .Where(p => p.BaseType == typeof(BaseEntity));
+
+            foreach (var types in typesToRegister)
+                foreach (var type in types)
+                {
+                    modelBuilder.Entity(type);
+                }
         }
     }
 }

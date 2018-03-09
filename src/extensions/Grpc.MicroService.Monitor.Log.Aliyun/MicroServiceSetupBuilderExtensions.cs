@@ -5,9 +5,9 @@ using System;
 
 namespace Grpc.Server
 {
-    public static class MicroServiceOptionsExtensions
+    public static class MicroServiceSetupBuilderExtensions
     {
-        public static IMicroServiceOptions UseAliyunLog(this IMicroServiceOptions config, IConfigurationSection aliyunLogSection)
+        public static IMicroServiceSetupBuilder UseAliyunLog(this IMicroServiceSetupBuilder config, IConfigurationSection aliyunLogSection)
         {
             var endpoint = aliyunLogSection.GetValue<string>("EndPoint");
             var accessKeyId = aliyunLogSection.GetValue<string>("AccessKeyId");

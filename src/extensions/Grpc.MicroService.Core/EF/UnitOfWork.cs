@@ -189,7 +189,8 @@ namespace Grpc.MicroService.EF
                     }
 
                     // dispose the db context.
-                    _context.Dispose();
+                    // dbcontextpool condition can't dispose
+                    // _context.Dispose();
                 }
             }
 

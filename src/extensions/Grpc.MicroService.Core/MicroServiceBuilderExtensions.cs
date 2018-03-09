@@ -20,7 +20,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static IMicroServiceBuilder AddMysql(this IMicroServiceBuilder builder, string dbConnectionString)
         {
-            builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseMySQL(dbConnectionString));
+            builder.Services.AddDbContextPool<ApplicationDbContext>(options => options.UseMySQL(dbConnectionString));
             builder.Services.AddUnitOfWork<ApplicationDbContext>();
             return builder;
         }

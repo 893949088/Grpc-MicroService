@@ -26,6 +26,7 @@ namespace ExampleServer
             {
                 builder.RegisterService<ExampleServiceImpl>();
                 builder.AddMysql(Configuration.MicroService().GetConnectionString("DbConnectionString"));
+                builder.AddAppMetrics(Configuration.MicroService().GetAppMetricsConfig());
             });
         }
 
@@ -35,6 +36,7 @@ namespace ExampleServer
             {
                 config.UseZipkinTracer(Configuration.MicroService().GetZipkinCollectorUrl());
                 //config.UseAliyunLog(Configuration.MicroService().GetAliyunLogConfig());
+                config.UseAppMetrics();
             });
         }
     }

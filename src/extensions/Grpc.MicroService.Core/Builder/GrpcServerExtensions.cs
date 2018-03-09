@@ -12,9 +12,9 @@ namespace Grpc.Server
     public static class GrpcServerExtensions
     {
 
-        public static IGrpcServer UseMicroService(this IGrpcServer server, Action<IMicroServiceOptions> configuration = null)
+        public static IGrpcServer UseMicroService(this IGrpcServer server, Action<IMicroServiceSetupBuilder> configuration = null)
         {
-            var microserviceOptions = new MicroServiceOptions(server);
+            var microserviceOptions = new MicroServiceSetupBuilder(server);
 
             if (configuration != null)
             {
