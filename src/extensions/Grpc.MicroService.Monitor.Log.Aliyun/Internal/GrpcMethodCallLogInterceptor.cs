@@ -19,7 +19,7 @@ namespace Grpc.MicroService.Internal
 
         public GrpcMethodCallLogInterceptor(IServiceProvider serviceProvider)
         {
-            _logger = serviceProvider.GetService<ILoggerFactory>().CreateAliyunLogger();
+            _logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger("AliyunLogger");
             _serverName = serviceProvider.GetService<GrpcHostOptions>().ApplicationName;
         }
 
@@ -47,19 +47,10 @@ namespace Grpc.MicroService.Internal
                 response = await continuation(request, context);
                 return response;
             }
-            catch (CommonException ex)
+            catch(Exception ex)
             {
-                response = Activator.CreateInstance<TResponse>();
-                response.Code = ex.Code ?? "";
-                response.Message = ex.Message ?? "";
-                return response;
-            }
-            catch (Exception ex)
-            {
-                response = Activator.CreateInstance<TResponse>();
-                response.Code = "10001";
-                response.Message = "哎呀，服务开了个小差 (>﹏<)~！";
-                return response;
+                exception = ex.ToString();
+                throw ex;
             }
             finally
             {
@@ -72,7 +63,7 @@ namespace Grpc.MicroService.Internal
                     {"SververHost",context.Host},
                     {"Method",context.Method},
                     {"RequestValue", JsonConvert.SerializeObject(request)},
-                    {"ReturnValue", JsonConvert.SerializeObject(response)},
+                    {"ReturnValue", response!=null?JsonConvert.SerializeObject(response):""},
                     {"Time", DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss") },
                     {"Exception",exception },
                     {"ElapsedMilliseconds",watch.ElapsedMilliseconds.ToString() }

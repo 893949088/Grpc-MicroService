@@ -13,7 +13,7 @@ namespace Grpc.Server
             var accessKeyId = aliyunLogSection.GetValue<string>("AccessKeyId");
             var accessKeySecret = aliyunLogSection.GetValue<string>("AccessKeySecret");
 
-            config.AddNLogRule(new EntityFrameworkTarget(endpoint, accessKeyId, accessKeySecret), "Microsoft.EntityFrameworkCore.*");
+            config.AddNLogRule(new EntityFrameworkTarget(endpoint, accessKeyId, accessKeySecret), "Microsoft.EntityFrameworkCore.*", true);
             config.AddNLogRule(new DefaultTarget(endpoint, accessKeyId, accessKeySecret), "AliyunLogger");
 
             config.Server.UseInterceptor(new GrpcMethodCallLogInterceptor(config.Server.ApplicationServices));

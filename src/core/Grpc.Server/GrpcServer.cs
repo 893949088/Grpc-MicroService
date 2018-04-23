@@ -30,7 +30,7 @@ namespace Grpc.Server
             var serviceImpls = ApplicationServices.GetServices<IGrpcService>();
             if (serviceImpls == null || !serviceImpls.Any())
             {
-                Console.WriteLine("Cannot Resolve GrpcService");
+                throw new Exception("Cannot Resolve GrpcService");
             }
 
             foreach (var serviceImpl in serviceImpls)
@@ -42,6 +42,8 @@ namespace Grpc.Server
                 var serviceDefinition = bindMethod.Invoke(null, new object[] { serviceImpl }) as ServerServiceDefinition;
                 serviceDefinitions.Add(serviceDefinition.Intercept(new ServerMethodInterceptor(serviceType, this.ApplicationServices)));
             }
+
+            ServiceInterceptors.Add(new ExceptionInterceptor());
 
             return serviceDefinitions;
         }

@@ -8,7 +8,7 @@ using System.Text;
 namespace ExampleServer.Domain
 {
     [Table("User")]
-    public class User : BaseEntity
+    public class User : OptimistEntity
     {
         [Key]
         public int UserId { get; set; }

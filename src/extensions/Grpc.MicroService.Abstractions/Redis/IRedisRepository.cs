@@ -46,6 +46,16 @@ namespace Grpc.MicroService.Redis
         bool StringSet<T>(string key, T value, TimeSpan? expiry = default(TimeSpan?)) where T : class;
 
         /// <summary>
+        /// Redis String类型 新增一条记录
+        /// </summary>
+        /// <typeparam name="T">generic refrence type</typeparam>
+        /// <param name="key">unique key of value</param>
+        /// <param name="value">value of key of type T</param>
+        /// <param name="expiresAt">time span of expiration</param>
+        /// <returns>true or false</returns>
+        bool StringSet(string key, int value, TimeSpan? expiresAt = default(TimeSpan?));
+
+        /// <summary>
         /// 更新时应使用此方法，代码更可读。
         /// </summary>
         /// <typeparam name="T"></typeparam>

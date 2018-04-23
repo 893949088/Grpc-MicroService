@@ -26,7 +26,7 @@ namespace Grpc.Server.Internal
 
         #region Handler
 
-        public override Task<TResponse> UnaryServerHandler<TRequest, TResponse>(TRequest request, ServerCallContext context, UnaryServerMethod<TRequest, TResponse> continuation)
+        public override async Task<TResponse> UnaryServerHandler<TRequest, TResponse>(TRequest request, ServerCallContext context, UnaryServerMethod<TRequest, TResponse> continuation)
         {
             var methodName = context.Method.Split('/').Last();
             var callMethod = _methods.FirstOrDefault(p => p.Name == methodName);
@@ -35,11 +35,21 @@ namespace Grpc.Server.Internal
             using (var scope = serviceScopeFactory.CreateScope())
             {
                 var grpcContext = scope.ServiceProvider.GetService<GrpcContext>();
-                grpcContext.Request = context;
-                var serviceInstance = scope.ServiceProvider.GetService(serviceType);
-                var serviceResult = callMethod.Invoke(serviceInstance, new object[] { request, context });
-
-                return serviceResult as Task<TResponse>;
+                try
+                {
+                    grpcContext.Request = context;
+                    var serviceInstance = scope.ServiceProvider.GetService(serviceType);
+                    var response =await ((Task<TResponse>)callMethod.Invoke(serviceInstance, new object[] { request, context }));
+                    return response;
+                }
+                catch (MessageCodeException message)
+                {
+                    var response = Activator.CreateInstance<TResponse>();
+                    TryProperty(response, "Code", message.Code ?? "");
+                    TryProperty(response, "Message", message.Message ?? "");
+                    TryProperty(response, "Success", false);
+                    return response;
+                }
             }
         }
 
@@ -90,33 +100,19 @@ namespace Grpc.Server.Internal
 
         #endregion
 
-        #region Call
+        #region private
 
-        public override AsyncUnaryCall<TResponse> AsyncUnaryCall<TRequest, TResponse>(TRequest request, ClientInterceptorContext<TRequest, TResponse> context, AsyncUnaryCallContinuation<TRequest, TResponse> continuation)
+        private void TryProperty<T>(T response, string propertyName, object value)
         {
-            return base.AsyncUnaryCall(request, context, continuation);
-        }
-
-        public override AsyncClientStreamingCall<TRequest, TResponse> AsyncClientStreamingCall<TRequest, TResponse>(ClientInterceptorContext<TRequest, TResponse> context, AsyncClientStreamingCallContinuation<TRequest, TResponse> continuation)
-        {
-            return base.AsyncClientStreamingCall(context, continuation);
-        }
-
-        public override AsyncServerStreamingCall<TResponse> AsyncServerStreamingCall<TRequest, TResponse>(TRequest request, ClientInterceptorContext<TRequest, TResponse> context, AsyncServerStreamingCallContinuation<TRequest, TResponse> continuation)
-        {
-            return base.AsyncServerStreamingCall(request, context, continuation);
-        }
-
-        public override AsyncDuplexStreamingCall<TRequest, TResponse> AsyncDuplexStreamingCall<TRequest, TResponse>(ClientInterceptorContext<TRequest, TResponse> context, AsyncDuplexStreamingCallContinuation<TRequest, TResponse> continuation)
-        {
-            return base.AsyncDuplexStreamingCall(context, continuation);
-        }
-
-        public override TResponse BlockingUnaryCall<TRequest, TResponse>(TRequest request, ClientInterceptorContext<TRequest, TResponse> context, BlockingUnaryCallContinuation<TRequest, TResponse> continuation)
-        {
-            return base.BlockingUnaryCall(request, context, continuation);
+            var props = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            var prop = props.FirstOrDefault(p => p.Name == propertyName);
+            if (prop != null)
+            {
+                prop.SetValue(response, value);
+            }
         }
 
         #endregion
+
     }
 }

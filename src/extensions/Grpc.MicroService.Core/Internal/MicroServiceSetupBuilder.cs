@@ -20,22 +20,23 @@ namespace Grpc.MicroService.Internal
             NLogBuilder = new NLogConfigurationBuilder();
         }
 
-        public IMicroServiceSetupBuilder AddNLogRule(LogLevel minLevel, LogLevel maxLevel, Target target, string loggerNamePattern = "*")
+        public IMicroServiceSetupBuilder AddNLogRule(LogLevel minLevel, LogLevel maxLevel, Target target, string loggerNamePattern, bool final)
         {
-            NLogBuilder.AddNLogRule(minLevel, maxLevel, target, loggerNamePattern);
+            NLogBuilder.AddNLogRule(minLevel, maxLevel, target, loggerNamePattern, final);
             return this;
         }
 
-        public IMicroServiceSetupBuilder AddNLogRule(Target target, string loggerNamePattern = "*")
+        public IMicroServiceSetupBuilder AddNLogRule(Target target, string loggerNamePattern, bool final)
         {
-            NLogBuilder.AddNLogRule(target, loggerNamePattern);
+            NLogBuilder.AddNLogRule(target, loggerNamePattern, final);
             return this;
         }
 
-        public IMicroServiceSetupBuilder AddNLogRule(LogLevel level, Target target, string loggerNamePattern = "*")
+        public IMicroServiceSetupBuilder AddNLogRule(LogLevel level, Target target, string loggerNamePattern, bool final)
         {
-            NLogBuilder.AddNLogRule(level, target, loggerNamePattern);
+            NLogBuilder.AddNLogRule(level, target, loggerNamePattern, final);
             return this;
         }
+
     }
 }

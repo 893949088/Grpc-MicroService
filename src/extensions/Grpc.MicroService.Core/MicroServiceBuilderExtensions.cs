@@ -25,11 +25,16 @@ namespace Microsoft.Extensions.DependencyInjection
             return builder;
         }
 
-        public static IMicroServiceBuilder AddRedis(this IMicroServiceBuilder builder, string redisConnectionString)
+        public static IMicroServiceBuilder AddStackExchangeRedis(this IMicroServiceBuilder builder, string redisConnectionString)
         {
             builder.Services.AddSingleton<IRedisRepository>(p => new StackExchangeRedisRespository(redisConnectionString));
             return builder;
         }
-        
+
+        public static IMicroServiceBuilder AddServiceStackRedis(this IMicroServiceBuilder builder, string[] masters, string[] slaves, int maxWritePoolSize, int maxReadPoolSize, bool autoStart, int defaultDb)
+        {
+            builder.Services.AddSingleton<IRedisRepository>(p => new ServiceStackRedisRespository(masters, slaves, maxReadPoolSize, maxWritePoolSize, autoStart, defaultDb));
+            return builder;
+        }
     }
 }

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>0.1.1-pre</Version>
+    <Version>0.1.7-pre</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,10 +13,12 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="2.0.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.0.1" />
     <PackageReference Include="MySql.Data.EntityFrameworkCore" Version="8.0.10-rc" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
-    <PackageReference Include="NLog.Extensions.Logging" Version="1.0.0-rtm-rc7" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="1.0.0" />
     <PackageReference Include="StackExchange.Redis" Version="1.2.6" />
+    <PackageReference Include="StoreTeam.Redis" Version="1.0.1-pre-1000" />
   </ItemGroup>
 
   <ItemGroup>

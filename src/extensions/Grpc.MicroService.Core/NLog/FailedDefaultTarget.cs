@@ -6,10 +6,11 @@ using System.Text;
 
 namespace Grpc.MicroService.NLog
 {
-    internal class DefaultTarget : TargetWithLayout
+
+    internal class FailedDefaultTarget : TargetWithLayout
     {
 
-        public DefaultTarget()
+        public FailedDefaultTarget()
         {
 
         }

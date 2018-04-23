@@ -613,7 +613,7 @@ namespace Grpc.MicroService.EF
 
         private void TryAutoOptimist(bool created, TEntity entity)
         {
-            if (typeof(TEntity).IsAssignableFrom(typeof(OptimistEntity)))
+            if (typeof(OptimistEntity).IsAssignableFrom(typeof(TEntity)))
             {
                 var optimistEntity = entity as OptimistEntity;
                 var nowDateTime = CommonUtility.GetJsTimespan(DateTime.Now);

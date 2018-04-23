@@ -12,53 +12,70 @@ namespace Grpc.MicroService.NLog
     public class NLogConfigurationBuilder
     {
         private readonly LoggingConfiguration _config;
-        private readonly ConsoleTarget _internalTarget;
+        private readonly Target _failedDefaultTarget;
+        private Target _defaultTarget;
 
         public NLogConfigurationBuilder()
         {
             _config = new LoggingConfiguration();
-            _internalTarget = new ConsoleTarget()
+            _failedDefaultTarget = new FailedDefaultTarget();
+            _defaultTarget = new ConsoleTarget()
             {
                 Layout = "${longdate} | ${level:uppercase=false:padding=-5} | ${message} ${onexception:${exception:format=tostring} ${newline} ${stacktrace} ${newline}"
             };
-
         }
 
-        public void AddNLogRule(LogLevel minLevel, LogLevel maxLevel, Target target, string loggerNamePattern = "*")
+        public void AddNLogRule(LogLevel minLevel, LogLevel maxLevel, Target target, string loggerNamePattern, bool final = false)
         {
-            var targetGroup = new FallbackGroupTarget(target, new DefaultTarget())
+            if ("*".Equals(loggerNamePattern))
+            {
+                throw new ArgumentException("loggerNamePattern cannot be *");
+            }
+
+            var targetGroup = new FallbackGroupTarget(target, _failedDefaultTarget)
             {
                 ReturnToFirstOnSuccess = true
             };
-            _config.AddRule(minLevel, maxLevel, new AsyncTargetWrapper(targetGroup), loggerNamePattern);
+            _config.AddRule(minLevel, maxLevel, new AsyncTargetWrapper(targetGroup), loggerNamePattern, final);
         }
 
-        public void AddNLogRule(Target target, string loggerNamePattern = "*")
+        public void AddNLogRule(Target target, string loggerNamePattern, bool final = false)
         {
-            var targetGroup = new FallbackGroupTarget(target, new DefaultTarget())
+            if ("*".Equals(loggerNamePattern))
+            {
+                throw new ArgumentException("loggerNamePattern cannot be *");
+            }
+
+            var targetGroup = new FallbackGroupTarget(target, _failedDefaultTarget)
             {
                 ReturnToFirstOnSuccess = true
             };
-            _config.AddRuleForAllLevels(new AsyncTargetWrapper(targetGroup), loggerNamePattern);
+            _config.AddRuleForAllLevels(new AsyncTargetWrapper(targetGroup), loggerNamePattern, final);
         }
 
-        public void AddNLogRule(LogLevel level, Target target, string loggerNamePattern = "*")
+        public void AddNLogRule(LogLevel level, Target target, string loggerNamePattern, bool final = false)
         {
-            var targetGroup = new FallbackGroupTarget(target, new DefaultTarget())
+            if ("*".Equals(loggerNamePattern))
+            {
+                throw new ArgumentException("loggerNamePattern cannot be *");
+            }
+
+            var targetGroup = new FallbackGroupTarget(target, _failedDefaultTarget)
             {
                 ReturnToFirstOnSuccess = true
             };
-            _config.AddRuleForOneLevel(level, new AsyncTargetWrapper(targetGroup), loggerNamePattern);
+            _config.AddRuleForOneLevel(level, new AsyncTargetWrapper(targetGroup), loggerNamePattern, final);
+        }
+
+        public void DefaultTarget(Target target)
+        {
+            this._defaultTarget = target;
         }
 
         public LoggingConfiguration Build()
         {
-
             // add default rule
-            if (!_config.LoggingRules.Any())
-            {
-                _config.AddRuleForAllLevels(new AsyncTargetWrapper(_internalTarget));
-            }
+            _config.AddRuleForAllLevels(new AsyncTargetWrapper(_defaultTarget));
             return _config;
         }
 

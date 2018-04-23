@@ -1,30 +1,33 @@
-﻿using Newtonsoft.Json;
-using StackExchange.Redis;
+﻿using Grpc.MicroService.Redis;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
+using ServiceStack.Redis;
+using System.Linq;
 
 namespace Grpc.MicroService.Redis
 {
-    public class StackExchangeRedisRespository : IRedisRepository
+    public class ServiceStackRedisRespository : IRedisRepository
     {
-
         #region 初始化
 
-        private IDatabase _db;
-        private readonly ConnectionMultiplexer _redis;
+        private readonly IRedisClientsManager _redisClient;
 
         /// <summary>
         /// 构造函数，在其中注册Redis事件
         /// </summary>
-        public StackExchangeRedisRespository(string configuration)
+        public ServiceStackRedisRespository(string[] masters, string[] slaves, int maxWritePoolSize, int maxReadPoolSize, bool autoStart, int defaultDb)
         {
-            //const string configuration = "{0},abortConnect=false,defaultDatabase={1},ssl=false,ConnectTimeout={2},allowAdmin=true,connectRetry={3}";
-            _redis = ConnectionMultiplexer.Connect(configuration);
-            //_redis.PreserveAsyncOrder = false;
-            //_redis.ConnectionFailed;
-            _db = _redis.GetDatabase();
+            RedisConfig.VerifyMasterConnections = false;
+
+            _redisClient = new PooledRedisClientManager(masters, slaves, new RedisClientManagerConfig
+            {
+                MaxWritePoolSize = maxWritePoolSize,
+                MaxReadPoolSize = maxReadPoolSize,
+                AutoStart = autoStart,
+                DefaultDb = defaultDb
+            });
         }
 
         /// <summary>
@@ -34,10 +37,11 @@ namespace Grpc.MicroService.Redis
         /// <param name="asyncState"></param>
         public void SetDatabase(int db, object asyncState = null)
         {
-            _db = _redis.GetDatabase(db, asyncState);
+            
         }
 
         #endregion
+
 
         #region Redis String数据类型操作
 
@@ -51,8 +55,10 @@ namespace Grpc.MicroService.Redis
         /// <returns>true or false</returns>
         public bool StringSet<T>(string key, T value, TimeSpan? expiresAt = default(TimeSpan?)) where T : class
         {
-            var stringContent = SerializeContent(value);
-            return _db.StringSet(key, stringContent, expiresAt);
+            using (var redis = _redisClient.GetClient())
+            {
+                return expiresAt == null ? redis.Set<T>(key, value) : redis.Set<T>(key, value, expiresAt.Value);
+            }
         }
 
         /// <summary>
@@ -65,8 +71,10 @@ namespace Grpc.MicroService.Redis
         /// <returns>true or false</returns>
         public bool StringSet(string key, int value, TimeSpan? expiresAt = default(TimeSpan?))
         {
-            var stringContent = SerializeContent(value);
-            return _db.StringSet(key, stringContent, expiresAt);
+            using (var redis = _redisClient.GetClient())
+            {
+                return expiresAt == null ? redis.Set(key, value) : redis.Set(key, value, expiresAt.Value);
+            }
         }
 
         /// <summary>
@@ -80,22 +88,25 @@ namespace Grpc.MicroService.Redis
         public bool StringSet<T>(string key, object value, TimeSpan? expiresAt = default(TimeSpan?)) where T : class
         {
             var stringContent = SerializeContent(value);
-            return _db.StringSet(key, stringContent, expiresAt);
+            using (var redis = _redisClient.GetClient())
+            {
+                return expiresAt == null ? redis.Set(key, stringContent) : redis.Set(key, stringContent, expiresAt.Value);
+            }
         }
 
 
-        /// <summary>
-        /// Redis String类型 新增一条记录
-        /// </summary>
-        /// <typeparam name="T">generic refrence type</typeparam>
-        /// <param name="key">unique key of value</param>
-        /// <param name="value">value of key of type object</param>
-        /// <param name="expiresAt">time span of expiration</param>
-        /// <returns>true or false</returns>
-        public bool StringSetByValue(string key, RedisValue value, TimeSpan? expiresAt = default(TimeSpan?))
-        {
-            return _db.StringSet(key, value, expiresAt);
-        }
+        ///// <summary>
+        ///// Redis String类型 新增一条记录
+        ///// </summary>
+        ///// <typeparam name="T">generic refrence type</typeparam>
+        ///// <param name="key">unique key of value</param>
+        ///// <param name="value">value of key of type object</param>
+        ///// <param name="expiresAt">time span of expiration</param>
+        ///// <returns>true or false</returns>
+        //public bool StringSetByValue(string key, RedisValue value, TimeSpan? expiresAt = default(TimeSpan?))
+        //{
+        //    return _db.StringSet(key, value, expiresAt);
+        //}
 
         /// <summary>
         /// Redis String数据类型 获取指定key中字符串长度
@@ -104,7 +115,10 @@ namespace Grpc.MicroService.Redis
         /// <returns></returns>
         public long StringLength(string key)
         {
-            return _db.StringLength(key);
+            using (var redis = _redisClient.GetClient())
+            {
+                return redis.GetStringCount(key);
+            }
         }
 
         /// <summary>
@@ -115,7 +129,10 @@ namespace Grpc.MicroService.Redis
         /// <returns>总长度</returns>
         public long StringAppend(string key, string appendVal)
         {
-            return _db.StringAppend(key, appendVal);
+            using (var redis = _redisClient.GetClient())
+            {
+                return redis.AppendToValue(key, appendVal);
+            }
         }
 
         /// <summary>
@@ -127,7 +144,10 @@ namespace Grpc.MicroService.Redis
         /// <returns>OldVal</returns>
         public string StringGetAndSet(string key, string newVal)
         {
-            return DeserializeContent<string>(_db.StringGetSet(key, newVal));
+            using (var redis = _redisClient.GetClient())
+            {
+                return redis.GetAndSetValue(key, newVal);
+            }
         }
 
         /// <summary>
@@ -143,7 +163,10 @@ namespace Grpc.MicroService.Redis
         public bool StringUpdate<T>(string key, T value, TimeSpan expiresAt) where T : class
         {
             var stringContent = SerializeContent(value);
-            return _db.StringSet(key, stringContent, expiresAt);
+            using (var redis = _redisClient.GetClient())
+            {
+                return expiresAt == null ? redis.Set(key, stringContent) : redis.Set(key, stringContent, expiresAt);
+            }
         }
 
         /// <summary>
@@ -155,9 +178,12 @@ namespace Grpc.MicroService.Redis
         /// <returns>增长后的值</returns>
         public double StringIncrement(string key, double val)
         {
-            return _db.StringIncrement(key, val);
+            using (var redis = _redisClient.GetClient())
+            {
+                return redis.IncrementValueBy(key, val);
+            }
         }
-
+        
         /// <summary>
         /// Redis String类型  Get
         /// </summary>
@@ -166,23 +192,9 @@ namespace Grpc.MicroService.Redis
         /// <returns>T</returns>
         public T StringGet<T>(string key) where T : class
         {
-            try
+            using (var redis = _redisClient.GetClient())
             {
-                RedisValue myString = _db.StringGet(key);
-
-                if (myString.HasValue && !myString.IsNullOrEmpty)
-                {
-                    return DeserializeContent<T>(myString);
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch (Exception)
-            {
-                // Log Exception
-                return null;
+                return redis.Get<T>(key);
             }
         }
 
@@ -194,7 +206,10 @@ namespace Grpc.MicroService.Redis
         /// <returns>T</returns>
         public string StringGet(string key)
         {
-            return _db.StringGet(key);
+            using (var redis = _redisClient.GetClient())
+            {
+                return redis.Get<string>(key);
+            }
         }
 
         #endregion
@@ -205,8 +220,10 @@ namespace Grpc.MicroService.Redis
         /// </summary>
         public void HashSet<T>(string key, IEnumerable<KeyValuePair<string, T>> keyvalues)
         {
-            var hashEntrys = keyvalues.Select(p => new HashEntry(p.Key, SerializeContent(p.Value)));
-            _db.HashSet(key, hashEntrys.ToArray());
+            using (var redis = _redisClient.GetClient())
+            {
+                redis.SetRangeInHash(key, keyvalues.Select(p => new KeyValuePair<string, string>(p.Key, SerializeContent(p.Value))));
+            }
         }
         /// <summary>
         /// Redis散列数据类型  新增一个
@@ -216,7 +233,10 @@ namespace Grpc.MicroService.Redis
         /// <param name="val"></param>
         public void HashSet<T>(string key, string field, T val)
         {
-            _db.HashSet(key, field, SerializeContent(val));
+            using (var redis = _redisClient.GetClient())
+            {
+                redis.SetEntryInHash(key, field, SerializeContent(val));
+            }
         }
         /// <summary>
         ///  Redis散列数据类型 获取指定key的指定field
@@ -226,8 +246,12 @@ namespace Grpc.MicroService.Redis
         /// <returns></returns>
         public T HashGet<T>(string key, string field)
         {
-            return DeserializeContent<T>(_db.HashGet(key, field));
+            using (var redis = _redisClient.GetClient())
+            {
+                return DeserializeContent<T>(redis.GetValueFromHash(key, field));
+            }
         }
+
         /// <summary>
         ///  Redis散列数据类型 获取所有field所有值,以 HashEntry[]形式返回
         /// </summary>
@@ -236,8 +260,11 @@ namespace Grpc.MicroService.Redis
         /// <returns></returns>
         public IEnumerable<KeyValuePair<string, T>> HashGetAll<T>(string key)
         {
-            var allHashEntrys = _db.HashGetAll(key);
-            return allHashEntrys.Select(p => new KeyValuePair<string, T>(p.Name, DeserializeContent<T>(p.Value)));
+            using (var redis = _redisClient.GetClient())
+            {
+                var allHashEntrys = redis.GetAllEntriesFromHash(key);
+                return allHashEntrys.Select(p => new KeyValuePair<string, T>(p.Key, DeserializeContent<T>(p.Value)));
+            }
         }
         /// <summary>
         /// Redis散列数据类型 获取key中所有field的值。
@@ -248,7 +275,10 @@ namespace Grpc.MicroService.Redis
         /// <returns></returns>
         public IEnumerable<T> HashGetAllValues<T>(string key)
         {
-            return _db.HashValues(key).Select(p=> DeserializeContent<T>(p));
+            using (var redis = _redisClient.GetClient())
+            {
+                return redis.GetHashValues(key).Select(p => DeserializeContent<T>(p));
+            }
         }
 
         /// <summary>
@@ -259,7 +289,10 @@ namespace Grpc.MicroService.Redis
         /// <returns></returns>
         public string[] HashGetAllKeys(string key)
         {
-            return _db.HashKeys(key).ToStringArray();
+            using (var redis = _redisClient.GetClient())
+            {
+                return redis.GetHashKeys(key).ToArray();
+            }
         }
         /// <summary>
         ///  Redis散列数据类型  单个删除field
@@ -270,7 +303,10 @@ namespace Grpc.MicroService.Redis
         /// <returns></returns>
         public bool HashDelete(string key, string hashField)
         {
-            return _db.HashDelete(key, hashField);
+            using (var redis = _redisClient.GetClient())
+            {
+                return redis.RemoveEntryFromHash(hashField, key);
+            }
         }
         /// <summary>
         ///  Redis散列数据类型  批量删除field
@@ -281,12 +317,7 @@ namespace Grpc.MicroService.Redis
         /// <returns></returns>
         public long HashDelete(string key, string[] hashFields)
         {
-            List<RedisValue> list = new List<RedisValue>();
-            for (int i = 0; i < hashFields.Length; i++)
-            {
-                list.Add(hashFields[i]);
-            }
-            return _db.HashDelete(key, list.ToArray());
+            throw new NotImplementedException();
         }
         /// <summary>
         ///  Redis散列数据类型 判断指定键中是否存在此field
@@ -297,7 +328,10 @@ namespace Grpc.MicroService.Redis
         /// <returns></returns>
         public bool HashExists(string key, string field)
         {
-            return _db.HashExists(key, field);
+            using (var redis = _redisClient.GetClient())
+            {
+                return redis.HashContainsEntry(field, key);
+            }
         }
         /// <summary>
         /// Redis散列数据类型  获取指定key中field数量
@@ -307,7 +341,10 @@ namespace Grpc.MicroService.Redis
         /// <returns></returns>
         public long HashLength(string key)
         {
-            return _db.HashLength(key);
+            using (var redis = _redisClient.GetClient())
+            {
+                return redis.GetHashCount(key);
+            }
         }
         /// <summary>
         /// Redis散列数据类型  为key中指定field增加incrVal值
@@ -319,7 +356,10 @@ namespace Grpc.MicroService.Redis
         /// <returns></returns>
         public double HashIncrement(string key, string field, double incrVal)
         {
-            return _db.HashIncrement(key, field, incrVal);
+            using (var redis = _redisClient.GetClient())
+            {
+                return redis.IncrementValueInHash(field, key, incrVal);
+            }
         }
         #endregion
 
@@ -327,77 +367,104 @@ namespace Grpc.MicroService.Redis
 
         public T ListGetByIndex<T>(string key, long index)
         {
-            return DeserializeContent<T>(_db.ListGetByIndex(key, index));
+            using (var redis = _redisClient.GetClient())
+            {
+                return DeserializeContent<T>(redis.GetItemFromList(key, (int)index));
+            }
         }
 
         public long ListInsertAfter(string key, object pivot, object value)
         {
-            return _db.ListInsertAfter(key, SerializeContent(pivot), SerializeContent(value));
+            throw new NotImplementedException();
         }
 
         public long ListInsertBefore(string key, object pivot, object value)
         {
-            return _db.ListInsertBefore(key, SerializeContent(pivot), SerializeContent(value));
+            throw new NotImplementedException();
         }
 
         public T ListLeftPop<T>(string key)
         {
-            return DeserializeContent<T>(_db.ListLeftPop(key));
+            using (var redis = _redisClient.GetClient())
+            {
+                return DeserializeContent<T>(redis.RemoveStartFromList(key));
+            }
+            //return DeserializeContent<T>(_db.ListLeftPop(key));
         }
 
         public long ListLeftPush(string key, object[] values)
         {
-            return _db.ListLeftPush(key, values.Select(s => (RedisValue)SerializeContent(s)).ToArray());
+            using (var redis = _redisClient.GetClient())
+            {
+                redis.PrependRangeToList(key, values.Select(s => SerializeContent(s)).ToList());
+                return redis.GetListCount(key);
+            }
         }
 
         public long ListLeftPush(string key, object value)
         {
-            return _db.ListLeftPush(key, SerializeContent(value));
+            using (var redis = _redisClient.GetClient())
+            {
+                redis.PrependItemToList(key, SerializeContent(value));
+                return redis.GetListCount(key);
+            }
+            //return _db.ListLeftPush(key, SerializeContent(value));
         }
 
         public long ListLength(string key)
         {
-            return _db.ListLength(key);
+            using (var redis = _redisClient.GetClient())
+            {
+                return redis.GetListCount(key);
+            }
         }
 
         public T[] ListRange<T>(string key, long start = 0, long stop = -1)
         {
-            return _db.ListRange(key, start, stop).Select(s => DeserializeContent<T>(s)).ToArray();
+            throw new NotImplementedException();
+            //return _db.ListRange(key, start, stop).Select(s => DeserializeContent<T>(s)).ToArray();
         }
 
         public long ListRemove(string key, object value, long count = 0)
         {
-            return _db.ListRemove(key, SerializeContent(value), count);
+            throw new NotImplementedException();
+            //return _db.ListRemove(key, SerializeContent(value), count);
         }
 
         public T ListRightPop<T>(string key)
         {
-            return DeserializeContent<T>(_db.ListRightPop(key));
+            throw new NotImplementedException();
+            //return DeserializeContent<T>(_db.ListRightPop(key));
         }
 
         public T ListRightPopLeftPush<T>(string source, string destination)
         {
-            return DeserializeContent<T>(_db.ListRightPopLeftPush(source, destination));
+            throw new NotImplementedException();
+            //return DeserializeContent<T>(_db.ListRightPopLeftPush(source, destination));
         }
 
         public long ListRightPush(string key, object[] values)
         {
-            return _db.ListRightPush(key, values.Select(s => (RedisValue)SerializeContent(s)).ToArray());
+            throw new NotImplementedException();
+            //return _db.ListRightPush(key, values.Select(s => (RedisValue)SerializeContent(s)).ToArray());
         }
 
         public long ListRightPush(string key, object value)
         {
-            return _db.ListRightPush(key, SerializeContent(value));
+            throw new NotImplementedException();
+            //return _db.ListRightPush(key, SerializeContent(value));
         }
 
         public void ListSetByIndex(string key, long index, object value)
         {
-            _db.ListSetByIndex(key, index, SerializeContent(value));
+            throw new NotImplementedException();
+            //_db.ListSetByIndex(key, index, SerializeContent(value));
         }
 
         public void ListTrim(string key, long start, long stop)
         {
-            _db.ListTrim(key, start, stop);
+            throw new NotImplementedException();
+            //_db.ListTrim(key, start, stop);
         }
 
         #endregion
@@ -426,7 +493,10 @@ namespace Grpc.MicroService.Redis
         /// <returns></returns>
         public bool KeyExpire(string key, TimeSpan? expiry)
         {
-            return _db.KeyExpire(key, expiry);
+            using (var redis = _redisClient.GetClient())
+            {
+                return expiry == null ? redis.ExpireEntryIn(key, expiry.Value) : false;
+            }
         }
 
         /// <summary>
@@ -436,7 +506,10 @@ namespace Grpc.MicroService.Redis
         /// <returns></returns>
         public bool KeyExists(string key)
         {
-            return _db.KeyExists(key);
+            using (var redis = _redisClient.GetClient())
+            {
+                return redis.ContainsKey(key);
+            }
         }
 
         /// <summary>
@@ -444,7 +517,7 @@ namespace Grpc.MicroService.Redis
         /// </summary>
         public void DbConnectionStop()
         {
-            _redis.Dispose();
+            _redisClient.Dispose();
         }
 
         /// <summary>
@@ -454,7 +527,10 @@ namespace Grpc.MicroService.Redis
         /// <returns></returns>
         public bool KeyRemove(string key)
         {
-            return _db.KeyDelete(key);
+            using (var redis = _redisClient.GetClient())
+            {
+                return redis.Remove(key);
+            }
         }
         /// <summary>
         /// 从Redis中移除多个键
@@ -462,7 +538,10 @@ namespace Grpc.MicroService.Redis
         /// <param name="keys"></param>
         public void KeyRemove(string[] keys)
         {
-            _db.KeyDelete(keys.Select(p => (RedisKey)p).ToArray());
+            using (var redis = _redisClient.GetClient())
+            {
+                redis.RemoveAll(keys);
+            }
         }
         #endregion
 
@@ -473,7 +552,7 @@ namespace Grpc.MicroService.Redis
             return JsonConvert.SerializeObject(value);
         }
 
-        private T DeserializeContent<T>(RedisValue myString)
+        private T DeserializeContent<T>(string myString)
         {
             if (string.IsNullOrWhiteSpace(myString)) return default(T);
             return JsonConvert.DeserializeObject<T>(myString);
@@ -481,10 +560,9 @@ namespace Grpc.MicroService.Redis
 
         public void Dispose()
         {
-            _redis.Dispose();
+            _redisClient.Dispose();
         }
 
         #endregion
-
     }
 }
